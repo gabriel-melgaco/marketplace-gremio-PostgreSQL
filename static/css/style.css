@@ -1,0 +1,18 @@
+body{
+    font-family: "Oxanium", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: <weight>;
+    font-style: normal;
+   
+  }
+
+  .total{
+    font-size: 30px;
+    letter-spacing: 2px;
+  }
+
+  @media (min-width: 1025px) {
+    .h-custom {
+    height: 100vh !important;
+    }
+    }

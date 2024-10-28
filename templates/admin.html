@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/admin.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oxanium:wght@200..800&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <title>Área Restrita</title>
+  </head>
+  <body>
+    <!--Main Navigation-->
+    <header>
+      <!-- Sidebar -->
+      <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+        <div class="position-sticky">
+          <div class="list-group list-group-flush mx-3 mt-4">
+            <a href="#dashboard" class="list-group-item list-group-item-action py-2 ripple active" aria-current="true" data-bs-toggle="tab">
+              <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
+            </a>
+            <a href="#pessoal" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
+              <i class="fa-solid fa-person fa-fw me-3"></i><span>Controle Pessoal</span>
+            </a>
+            <a href="#estoque" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
+              <i class="fa-solid fa-warehouse fa-fw me-3"></i><span>Estoque</span>
+            </a>
+            <a href="#vendas" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
+              <i class="fa-solid fa-money-bill fa-fw me-3"></i><span>Histórico Vendas</span>
+            </a>
+            <a href="#compras" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
+              <i class="fa-solid fa-cart-shopping fa-fw me-3"></i><span>Controle Compras</span>
+            </a>
+            <a href="#relatorio" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
+                <i class="fa-regular fa-calendar fa-fw me-3"></i><span>Relatório</span>
+              </a>
+          </div>
+        </div>
+      </nav>
+      <!-- Sidebar -->
+    
+      <!-- Navbar -->
+      <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+        <div class="container-fluid">
+          <!-- Toggle button -->
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#sidebarMenu"
+            aria-controls="sidebarMenu"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <i class="fas fa-bars"></i>
+          </button>
+    
+          <!-- Brand -->
+          <a class="navbar-brand" href="#">
+            <img
+              src="static/img/1bavex.png"
+              height="25"
+              alt="Logo"
+              loading="lazy"
+            />  Área Administrativa Grêmio Falcão
+          </a>
+    
+          <!-- Right links -->
+          <ul class="navbar-nav ms-auto d-flex flex-row">
+            <li class="nav-item me-3 me-lg-0">
+              <a class="nav-link" href="#">Log Out
+                <i class="fa-solid fa-right-from-bracket"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <!-- Navbar -->
+    </header>
+    <!--Main Navigation-->
+  
+    <!-- Main layout -->
+<main style="margin-top: 58px;">
+  <div class="container pt-4">
+    <!-- Tab content -->
+    <div class="tab-content">
+
+      <!-- Conteúdo Dashboard -->
+      <div class="tab-pane fade show active" id="dashboard">
+        <h3>Dashboard</h3>
+        <p>Bem-vindo à área administrativa. Selecione uma opção no menu ao lado para começar.</p>
+      </div>
+
+    
+      <!-- CONTEÚDO PESSOAL -->
+      <div class="tab-pane fade" id="pessoal">
+        <h1>Controle de Pessoal</h1>
+
+        <!-- Cadastro de Pessoal -->
+        <div class="bg-white p-3 rounded shadow">
+            <h5>Cadastro de Pessoal</h5>
+            
+            <!-- Div para mensagens de sucesso ou erro -->
+            <div id="mensagem" style="display: none; padding: 10px;"></div> 
+
+            <form id="cadastrarPessoal">
+                <div class="row">
+                    <div class="col">
+                        <select class="form-control col" name="posto" id="posto" required>
+                            <option placeholder="Posto"></option>
+                            <option value="CEL">CEL</option>
+                            <option value="TC">TC</option>
+                            <option value="MAJ">MAJ</option>
+                            <option value="CAP">CAP</option>
+                            <option value="TEN">TEN</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" placeholder="Nome de Guerra" id="nome" required>
+                    </div>
+                    <div class="col">
+                        <input type="telephone" class="form-control" placeholder="Telefone" id="telefone" required>
+                    </div>
+                    <div class="col">
+                        <button type="submit" class="btn btn-block btn-lg"> 
+                            <div class="d-flex justify-content-between">
+                                <i class="fa-regular fa-square-plus ms-2"></i>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabela de Pessoal -->
+        <div class="tabela bg-white p-3 rounded shadow">
+            <div class="form-group">
+                <!-- Form content, if any -->
+            </div>
+            <table id="tabelaPessoal" class="table text-black mb-0 table-responsive">
+                <thead>
+                    <tr>
+                        <th scope="col">id</th>
+                        <th scope="col">Posto</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Telefone</th>
+                        <th scope="col">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- A tabela de pessoal será renderizada aqui com JS -->
+                </tbody>
+            </table>
+        </div>
+      </div> <!-- Fim do conteúdo Pessoal -->
+
+
+      <!-- CONTEÚDO ESTOQUE -->
+      <div class="tab-pane fade" id="estoque">
+        <h1>Controle de Estoque</h1>
+
+        <!-- Cadastro de Produtos -->
+        <div class="bg-white p-3 rounded shadow">
+          <h5>Cadastro de Produtos:</h5>
+
+           <!-- Div para mensagens de sucesso ou erro -->
+           <div id="mensagem2" style="display: none; padding: 10px;"></div> 
+
+          <form id="cadastrarProduto" enctype="multipart/form-data">
+            <div class="row">
+              <div class="col">
+                <input type="text" class="form-control" placeholder="Nome Produto" id="produto" required>
+              </div>
+              <div class="col">
+                <input type="number" class="form-control" placeholder="Tamanho" id="tamanho" required>
+              </div>
+              <div class="col">
+                <select class="form-control col" name="unidade" id="unidade" required>
+                  <option value="">Selecione uma Unidade</option>
+                  <option value="l">L</option>
+                  <option value="ml">ml</option>
+                  <option value="g">g</option>
+                  <option value="kg">kg</option>
+                </select>
+              </div>
+              <div class="col">
+                <select class="form-control col" name="categoria" id="categoria" required>
+                  <option value="">Selecione uma categoria</option>
+                  <option value="bebida">Bebida</option>
+                  <option value="comida">Comida</option>
+                </select>
+              </div>
+              <div class="col">
+                <input type="price" class="form-control" placeholder="Preço Venda" id="preco_venda" required>
+              </div>
+              <div class="col">
+                <input type="file" name="arquivos" class="btn btn-success" accept="image/png" multiple id="foto"/>
+                <p>Faça upload de imagem em PNG*</p>
+              </div>
+              <div class="col">
+                <button type="submit" class="btn btn-block btn-lg">
+                  <div class="d-flex justify-content-between">
+                    <i class="fa-regular fa-square-plus ms-2"></i>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabela de Produtos do Estoque -->
+        <div class="tabela bg-white p-3 rounded shadow">
+          <div class="form-group">
+            <!-- Form content, if any -->
+          </div>
+          <table id="tabelaEstoque" class="table text-black mb-0 table-responsive">
+            <thead>
+              <tr>
+                <th scope="col">id</th>
+                <th scope="col">Foto</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Tamanho</th>
+                <th scope="col">Unidade</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Categoria</th>
+                <th scope="col">Preço Venda</th>
+                <th scope="col">Preço Compra</th>
+                <th scope="col">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- A tabela de produtos será renderizada aqui com JS -->
+            </tbody>
+          </table>
+        </div>
+      </div> <!-- Fim do conteúdo Estoque -->
+
+
+      <!-- CONTEÚDO VENDAS -->
+      <div class="tab-pane fade" id="vendas">
+        <h1>Histórico de vendas</h1>
+
+        <!-- Tabela de histórico de vendas -->
+        <div class="tabela bg-white p-3 rounded shadow">
+          <div class="form-group">
+          </div>
+          <table id="tabelaVendas" class="table text-black mb-0 table-responsive">
+            <label>Filtrar por período:</label>
+            <div class="row">
+                <div class="col">
+                  De:<input type="date" class="form-control" placeholder="data">
+                </div>
+                <div class="col">
+                  Até:<input type="date" class="form-control" placeholder="data">
+                </div>
+            </div>
+            <thead>
+              <tr>
+                <th scope="col">id</th>
+                <th scope="col">Nome</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Valor Total</th>
+                <th scope="col">Hora</th>
+                <th scope="col">Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- A tabela de vendas será renderizada aqui com JS -->
+            </tbody>
+          </table>
+        </div>
+      </div> <!-- Fim do conteúdo de vendas -->
+
+
+      <!-- CONTEÚDO COMPRAS -->
+      <div class="tab-pane fade" id="compras">
+        <h1>Controle de Compras</h1>
+
+        <!-- Cadastro de Produtos -->
+        <div class="bg-white p-3 rounded shadow">
+          <h5>Cadastro de Compras:</h5>
+          <form id="cadastrarCompras">
+            <div class="row">
+              <div class="col">
+                <select class="form-control" name="produto" id="listaProdutos">
+                    <option value="">Selecione um produto</option>
+                    <!-- Renderizar lista de produtos comprados aqui -->
+                </select>
+            </div>
+              <div class="col">
+                <input type="number" class="form-control" placeholder="Quantidade">
+              </div>
+              <div class="col">
+                <input type="price" class="form-control" placeholder="Preço Compra">
+              </div>
+              <div class="col">
+                <input type="date" class="form-control" placeholder="data">
+              </div>
+              
+              <div class="col">
+                <button type="submit" class="btn btn-block btn-lg">
+                  <div class="d-flex justify-content-between">
+                    <i class="fa-regular fa-square-plus ms-2"></i>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Tabela de Produtos comprados aqui -->
+        <div class="tabela bg-white p-3 rounded shadow">
+          <div class="form-group">
+            <!-- Form content, if any -->
+          </div>
+          <table id="tabelaCompras" class="table text-black mb-0 table-responsive">
+            <label>Filtrar por período:</label>
+              <div class="row">
+                  <div class="col">
+                    De:<input type="date" class="form-control" placeholder="data">
+                  </div>
+                  <div class="col">
+                    Até:<input type="date" class="form-control" placeholder="data">
+                  </div>
+              </div>
+            <thead>
+              <tr>
+                <th scope="col">id</th>
+                <th scope="col">Produto</th>
+                <th scope="col">Quantidade</th>
+                <th scope="col">Preço Compra</th>
+                <th scope="col">Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- A tabela de produtos  comprados será renderizada aqui com JS -->
+            </tbody>
+          </table>
+        </div>
+      </div> <!-- Fim do conteúdo Compras -->
+
+      <!-- CONTEÚDO RELATÓRIO -->
+      <div class="tab-pane fade" id="relatorio">
+        <h1>Relatório</h1>
+
+        <!-- Emissor de Relatórios -->
+        <div class="bg-white p-3 rounded shadow">
+          <h5>Emitir relatório por período:</h5>
+          <form>
+            <div class="row">
+                <div class="col">
+                  De:<input type="date" class="form-control" placeholder="data">
+                </div>
+                <div class="col">
+                  Até:<input type="date" class="form-control" placeholder="data">
+                </div>
+            </div>
+              <div class="col">
+                <button type="button" class="btn btn-block btn-lg">
+                  <div class="d-flex justify-content-between">
+                    <i class="fa-solid fa-download"></i>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div> <!-- Fim do conteúdo Compras -->
+
+    </div> <!-- Fim de Tab Content -->
+  </div> <!-- Fim de Container -->
+</main>
+
+
+    <!-- Bootstrap JS -->
+    <script src="/static/js/bootstrap.bundle.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/admin.js"></script>
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/9cf3f4ac1c.js" crossorigin="anonymous"></script>
+    
+  </body>
+</html>
