@@ -37,7 +37,10 @@
             </a>
             <a href="#relatorio" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
                 <i class="fa-regular fa-calendar fa-fw me-3"></i><span>Relatório</span>
-              </a>
+            </a>
+            <a href="#backup" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
+              <i class="fa-solid fa-database fa-fw me-3"></i><span>Backup</span>
+          </a>
           </div>
         </div>
       </nav>
@@ -94,7 +97,6 @@
         <h3>Dashboard</h3>
         <p>Bem-vindo à área administrativa. Selecione uma opção no menu ao lado para começar.</p>
       </div>
-
     
       <!-- CONTEÚDO PESSOAL -->
       <div class="tab-pane fade" id="pessoal">
@@ -123,7 +125,7 @@
                         <input type="text" class="form-control" placeholder="Nome de Guerra" id="nome" required>
                     </div>
                     <div class="col">
-                        <input type="telephone" class="form-control" placeholder="Telefone" id="telefone" required>
+                        <input type="number" class="form-control" placeholder="Telefone" id="telefone" required>
                     </div>
                     <div class="col">
                         <button type="submit" class="btn btn-block btn-lg"> 
@@ -195,7 +197,7 @@
                 </select>
               </div>
               <div class="col">
-                <input type="price" class="form-control" placeholder="Preço Venda" id="preco_venda" required>
+                <input type="number" class="form-control" placeholder="Preço Venda" id="preco_venda" step="0.01" required>
               </div>
               <div class="col">
                 <input type="file" name="arquivos" class="btn btn-success" accept="image/png" multiple id="foto"/>
@@ -250,14 +252,22 @@
           </div>
           <table id="tabelaVendas" class="table text-black mb-0 table-responsive">
             <label>Filtrar por período:</label>
-            <div class="row">
-                <div class="col">
-                  De:<input type="date" class="form-control" placeholder="data">
-                </div>
-                <div class="col">
-                  Até:<input type="date" class="form-control" placeholder="data">
-                </div>
-            </div>
+              <div class="row">
+                  <div class="col">
+                  <input type="date" class="form-control" placeholder="data" id="dataInicio2">
+                  </div>
+                  <div class="col">
+                  </div>
+                  <div class="col">
+                  <input type="date" class="form-control" placeholder="data" id="dataFim2">
+                  </div>
+                  <div class="col">
+                    <button id="botaoFiltrar2" class="btn btn-primary">Filtrar</button>
+                  </div>
+                  <div class="col">
+                    <button id="botaoLimpar2" class="btn btn-primary">Limpar</button>
+                  </div>
+              </div>
             <thead>
               <tr>
                 <th scope="col">id</th>
@@ -267,6 +277,7 @@
                 <th scope="col">Valor Total</th>
                 <th scope="col">Hora</th>
                 <th scope="col">Data</th>
+                <th scope="col">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -284,22 +295,25 @@
         <!-- Cadastro de Produtos -->
         <div class="bg-white p-3 rounded shadow">
           <h5>Cadastro de Compras:</h5>
+
+          <!-- Div para mensagens de sucesso ou erro -->
+          <div id="mensagem3" style="display: none; padding: 10px;"></div> 
+
           <form id="cadastrarCompras">
             <div class="row">
               <div class="col">
                 <select class="form-control" name="produto" id="listaProdutos">
-                    <option value="">Selecione um produto</option>
                     <!-- Renderizar lista de produtos comprados aqui -->
                 </select>
             </div>
               <div class="col">
-                <input type="number" class="form-control" placeholder="Quantidade">
+                <input type="number" class="form-control" placeholder="Quantidade" id="quantidade">
               </div>
               <div class="col">
-                <input type="price" class="form-control" placeholder="Preço Compra">
+                <input type="number" class="form-control" placeholder="Preço Compra" id="preco_compra" step="0.01" required>
               </div>
               <div class="col">
-                <input type="date" class="form-control" placeholder="data">
+                <input type="date" class="form-control" placeholder="data" id="data">
               </div>
               
               <div class="col">
@@ -322,10 +336,18 @@
             <label>Filtrar por período:</label>
               <div class="row">
                   <div class="col">
-                    De:<input type="date" class="form-control" placeholder="data">
+                  <input type="date" class="form-control" placeholder="data" id="dataInicio">
                   </div>
                   <div class="col">
-                    Até:<input type="date" class="form-control" placeholder="data">
+                  </div>
+                  <div class="col">
+                  <input type="date" class="form-control" placeholder="data" id="dataFim">
+                  </div>
+                  <div class="col">
+                    <button id="botaoFiltrar" class="btn btn-primary">Filtrar</button>
+                  </div>
+                  <div class="col">
+                    <button id="botaoLimpar" class="btn btn-primary">Limpar</button>
                   </div>
               </div>
             <thead>
@@ -335,6 +357,7 @@
                 <th scope="col">Quantidade</th>
                 <th scope="col">Preço Compra</th>
                 <th scope="col">Data</th>
+                <th scope="col">Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -347,30 +370,47 @@
       <!-- CONTEÚDO RELATÓRIO -->
       <div class="tab-pane fade" id="relatorio">
         <h1>Relatório</h1>
-
         <!-- Emissor de Relatórios -->
         <div class="bg-white p-3 rounded shadow">
           <h5>Emitir relatório por período:</h5>
           <form>
             <div class="row">
-                <div class="col">
-                  De:<input type="date" class="form-control" placeholder="data">
-                </div>
-                <div class="col">
-                  Até:<input type="date" class="form-control" placeholder="data">
-                </div>
-            </div>
               <div class="col">
-                <button type="button" class="btn btn-block btn-lg">
-                  <div class="d-flex justify-content-between">
-                    <i class="fa-solid fa-download"></i>
-                  </div>
-                </button>
+                De:<input type="date" class="form-control" placeholder="data">
+              </div>
+              <div class="col">
+                Até:<input type="date" class="form-control" placeholder="data">
               </div>
             </div>
+            <div class="col">
+              <button type="button" class="btn btn-block btn-lg">
+                <div class="d-flex justify-content-between">
+                  <i class="fa-solid fa-download"></i>
+                </div>
+              </button>
+            </div>
           </form>
-        </div>
-      </div> <!-- Fim do conteúdo Compras -->
+        </div><!-- fim emissor de relatórios-->
+      </div> <!-- Fim do conteúdo de relatório -->
+
+      <!-- CONTEÚDO BACKUP -->
+      <div class="tab-pane fade" id="backup">
+        <h1>Backup</h1>
+        <!-- Emissor de Backup -->
+        <div class="bg-white p-3 rounded shadow">
+          <h5>Fazer download de arquivo Backup:</h5>
+          <form id="downloadDatabase">
+            <div class="col">
+              <button type="submit" class="btn btn-block btn-lg">
+                <div class="d-flex justify-content-between">
+                  <i class="fa-solid fa-download"></i>
+                </div>
+              </button>
+            </div>
+          </form>
+        </div><!-- fim emissor de backup-->
+      </div> <!-- Fim do conteúdo de backup -->
+
 
     </div> <!-- Fim de Tab Content -->
   </div> <!-- Fim de Container -->

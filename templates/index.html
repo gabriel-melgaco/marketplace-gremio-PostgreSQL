@@ -24,81 +24,65 @@
                     <img src="static/img/1bavex.png" class="img-fluid mx-auto d-block" width="90" height="90">
                     
                     <hr>
-                    <div class="d-flex  align-items-center mb-4">
+                    <div class="navegacao d-flex  align-items-center mb-4">
                       <div>
                         <p class="mb-1">Indenizáveis Grêmio Falcão - Carrinho de Compras</p>
-                        <p class="mb-0 align-items-center text-right"><span class="text-muted text-right">Ordenar por:</span> <a href="#!"
-                          class="text-body"> <i class="fas fa-angle-down mt-1"></i></a></p>
                       </div>
                     </div>
-                    <!-- Início da lista de itens -->
-                    <div class="card mb-3 shadow">
-                      <div class="card-body">
-                          <div class="d-flex justify-content-between">
-                              <div class="d-flex flex-row align-items-center">
-                                  <div>
-                                      <img
-                                          src="/static/img/coca-cola.png"
-                                          class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
-                                  </div>
-                                  <div class="ms-3">
-                                      <h5>Coca-Cola</h5>
-                                  </div>
-                              </div>
-                              <div class="d-flex flex-row align-items-center">
-                                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                          onclick="this.parentNode.querySelector('input[type=number]').stepDown()">
-                                      <i class="fas fa-minus"></i>
-                                  </button>
-                  
-                                  <input id="form1" min="0" name="quantity" value="0" type="number"
-                                         class="form-control form-control-sm w-50" style="max-width: 50px;" />
-                  
-                                  <button data-mdb-button-init data-mdb-ripple-init class="btn btn-link px-2"
-                                          onclick="this.parentNode.querySelector('input[type=number]').stepUp()">
-                                      <i class="fas fa-plus"></i>
-                                  </button>
-                  
-                                  <div style="width: 80px;">
-                                      <h5 class="mb-0">R$2,50</h5>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
+                    
+                    <div id="containerList">
+                      <!--Onde será renderizado os produtos-->
+                    </div>
 
                   <!-- Caixa de seleção-->
                   </div>
                   <div class="col-lg-5">
     
+                    <section id="finalbox">
                     <div class="card bg-primary text-white rounded-3 shadow">
                       <div class="card-body shadow">
     
-                        <form class="mt-4">
+                        <form id="finalizarVenda" class="mt-4">
                           <div data-mdb-input-init class="form-outline form-white mb-4">
                             <label class="form-label" for="typeName">Selecione a conta:</label>
                             <div class="form-group">
-                              <select class="form-control" name="nome" id="nome">
-                                <option value="-">-</option>
-                                <option value="MELGAÇO">MELGAÇO</option>
-                                <option value="ALEF">ALEF</option>
-                                <option value="GILSON">GILSON</option>
+                              <select class="form-control" name="nome" id="listaPessoal" required>
                               </select>
                             </div>
                           </div>
                 
                           <div class="d-flex justify-content-between mb-4">
                             <p class="mb-2">Total</p>
-                            <strong><p class="mb-2 total">R$4818.00</p></strong>
+                            <strong><p class="mb-2 total">R$0,00</p></strong>
                           </div>
       
-                          <button  type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-block btn-lg">
+                          <button type="button" id="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-info btn-block btn-lg">
                             <div class="d-flex justify-content-between">
                               <strong><span>FINALIZAR <i class="fas fa-long-arrow-alt-right ms-2"></i></span></strong>
                             </div>
                           </button>
     
                         </form>
+                      </section>
+
+                        <!-- Modal para exibir confirmação -->
+                    <div class="modal fade" id="detalhesConfirmacao" tabindex="-1" aria-labelledby="detalhesConfirmacao" aria-hidden="true">
+                      <div class="modal-dialog">
+                          <div class="modal-content">
+                              <div class="modal-header">
+                                  <h5 class="modal-title" id="detalhesTarefaModalLabel" style="color: black;">Confirmação Pagamento</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body" id="modal-body" style="color: black">
+                              </div>
+                              <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" id="cancelar" data-bs-dismiss="modal">Cancelar</button>
+                                  <button type="button" class="btn btn-primary" id="confirmar">Confirmar</button>
+                              </div>
+                          </div>
+                      </div>
+                    </div>
+
     
                         <hr class="my-4">
                       </div>
@@ -113,7 +97,7 @@
           </div>
         </div>
       </div>
-      <footer class="bg-body-tertiary text-center text-lg-start">
+      <footer id="footer"class="bg-body-tertiary text-center text-lg-start">
         <!-- Copyright -->
         <div class="text-center p-3" style="background-color: rgb(255, 255, 255);">
           © 2024 Copyright:
@@ -121,7 +105,10 @@
           <a href="/login"><i class="fa-solid fa-gear"></i></a>
         </div>
         <!-- Copyright -->
+        <a class="whatsapp-link" href="#" onclick="scrollToFooter()"><i class="fa-solid fa-basket-shopping"></i><p class="totalValor">R$0,00</p></a>
       </footer>
+
+
     </section>
       <script src="/static/js/bootstrap.js"></script>
       <script src="/static/js/index.js"></script>
