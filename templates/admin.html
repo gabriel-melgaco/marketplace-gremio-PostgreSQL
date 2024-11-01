@@ -75,7 +75,7 @@
           <!-- Right links -->
           <ul class="navbar-nav ms-auto d-flex flex-row">
             <li class="nav-item me-3 me-lg-0">
-              <a class="nav-link" href="#">Log Out
+              <a id="logout" class="nav-link" href="#">Log Out
                 <i class="fa-solid fa-right-from-bracket"></i>
               </a>
             </li>
@@ -113,7 +113,7 @@
                 <div class="row">
                     <div class="col">
                         <select class="form-control col" name="posto" id="posto" required>
-                            <option placeholder="Posto"></option>
+                            <option value="">Selecione um posto</option>
                             <option value="CEL">CEL</option>
                             <option value="TC">TC</option>
                             <option value="MAJ">MAJ</option>
@@ -239,6 +239,27 @@
             </tbody>
           </table>
         </div>
+
+         <!-- Modal para exibir alterações no estoque -->
+         <div class="modal fade" id="alterarEstoque" tabindex="-1" aria-labelledby="alterarEstoque" aria-hidden="true">
+          <div class="modal-dialog">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="detalhesEstoque" style="color: black;">Alterar Estoque</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body" id="modal-body" style="color: black">
+                    <label>Preço Venda</label>
+                    <input type="number" class="form-control" placeholder="Preço Venda" id="preco_venda2" step="0.01" required>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" id="cancelar" data-bs-dismiss="modal">Cancelar</button>
+                      <button type="submit" class="btn btn-primary" id="salvar">Salvar</button>
+                  </div>
+              </div>
+          </div>
+        </div>
+
       </div> <!-- Fim do conteúdo Estoque -->
 
 
@@ -373,17 +394,17 @@
         <!-- Emissor de Relatórios -->
         <div class="bg-white p-3 rounded shadow">
           <h5>Emitir relatório por período:</h5>
-          <form>
+          <form id="downloadRelatorio">
             <div class="row">
               <div class="col">
-                De:<input type="date" class="form-control" placeholder="data">
+                De:<input type="date" class="form-control" placeholder="data" id="data1" required>
               </div>
               <div class="col">
-                Até:<input type="date" class="form-control" placeholder="data">
+                Até:<input type="date" class="form-control" placeholder="data2" id="data2" required>
               </div>
             </div>
             <div class="col">
-              <button type="button" class="btn btn-block btn-lg">
+              <button type="submit" class="btn btn-block btn-lg">
                 <div class="d-flex justify-content-between">
                   <i class="fa-solid fa-download"></i>
                 </div>

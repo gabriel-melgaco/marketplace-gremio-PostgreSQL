@@ -1,20 +1,28 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory
-from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask import Flask, render_template, request, jsonify, send_from_directory, send_file
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from peewee import *
+from datetime import datetime as dt
 import datetime
 import os
 from werkzeug.utils import secure_filename
 import unicodedata
 import re
+from openpyxl import Workbook
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
+app.secret_key = os.getenv('SECRET_KEY')
+app.config['usuario'] = os.getenv('DATABASE_USUARIO')
+app.config['senha'] = os.getenv('DATABASE_SENHA')
 
 
 #-------------LOGIN MANAGER ---------------------------------------
-
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'pagina_login'
 
 #-------------CLASSES BANCO DE DADOS ------------------------------
 db = SqliteDatabase('dados.db')
@@ -70,6 +78,11 @@ class Compra(Model):
         db_table = 'compra'
 
 
+class User(UserMixin):
+    def __init__(self, id):
+        self.id = id
+
+
 db.connect()
 db.create_tables([Pessoal, Estoque, Venda, Compra])
 #--------------------- FIM CLASSES BANCO DE DADOS --------------------
@@ -81,12 +94,17 @@ db.create_tables([Pessoal, Estoque, Venda, Compra])
 def index():
     return render_template('index.html')
 
-@app.route("/login")
-def login():
+@login_manager.user_loader
+def load_user(user_id):
+    return User(user_id) if user_id == app.config['usuario'] else None
+
+@app.route("/pagina_login")
+def pagina_login():
     return render_template('login.html')
 
-@app.route("/admin")
-def admin():
+@app.route("/protected")
+@login_required
+def protected():
     return render_template('admin.html')
 
 @app.route("/sucesso")
@@ -97,7 +115,24 @@ def sucesso():
 def error():
     return render_template('error.html')
 # ---------------------FIM DE RENDERIZAÇÃO DE PÁGINAS -----------------------
+@app.route("/login", methods=['POST'])
+def login():
+    data = request.json
+    usuario = data.get('usuario')
+    senha = data.get('senha')
 
+    if usuario == app.config['usuario'] and senha == app.config['senha']:
+        user = User(id=usuario)
+        login_user(user)
+        return jsonify({"status": "success", "message": "Usuário logado com sucesso"})
+
+    return jsonify({"status": "error", "message": "Credenciais inválidas"}), 401
+
+@app.route("/logout", methods=['POST'])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({"status": "success", "message": "Usuário deslogado com sucesso"})
 
 # ---------------------FUNÇÕES MANIPULAÇÃO DE BANCO DE DADOS -----------------------
 @app.route('/cadastrar_pessoal', methods=['POST'])
@@ -218,6 +253,25 @@ def remover_produto(id):
             return jsonify({'message': 'Produto removido com sucesso!'}), 200
         else:
             return jsonify({'error': 'Produto não encontrada!'}), 404
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/alterar_estoque/<int:id>', methods=['POST'])
+def alterar_estoque(id):
+    data = request.json
+    preco_venda = data.get('preco_venda')  # Correção aqui
+
+    try:
+        produto = Estoque.get_or_none(Estoque.id == id)
+        if produto is None:
+            return jsonify({'error': 'Produto não encontrado!'}), 404
+
+        produto.preco_venda = float(preco_venda)
+        produto.save()
+
+        return jsonify({'message': 'Produto alterado com sucesso!'}), 200
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
@@ -346,6 +400,75 @@ def remover_venda(id):
 
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+
+@app.route('/download_relatorio', methods=['POST'])
+def download_relatorio():
+    data = request.json
+    data1 = data.get('data1')
+    data2 = data.get('data2')
+    data_inicio = dt.strptime(data1, "%Y-%m-%d")
+    data_fim = dt.strptime(data2, "%Y-%m-%d")
+
+    # Filtra as vendas no intervalo de datas
+    relatorio = Venda.select().where((Venda.data >= data_inicio) & (Venda.data <= data_fim))
+
+    # Organiza os dados em dicionários
+    dados = {}
+    produtos = set()
+
+    for venda in relatorio:
+        nome = venda.nome.nome
+        produto_nome = venda.produto.produto
+        quantidade = venda.quantidade
+        valor_total = venda.valor_total
+
+        # Adiciona o produto ao conjunto de produtos
+        produtos.add(produto_nome)
+
+        # Organiza dados por pessoa
+        if nome not in dados:
+            dados[nome] = {'produtos': {}, 'total': 0}
+
+        # Atualiza a quantidade e o valor total
+        dados[nome]['produtos'][produto_nome] = dados[nome]['produtos'].get(produto_nome, 0) + quantidade
+        dados[nome]['total'] += valor_total
+
+
+    # Ordena os produtos para a ordem das colunas no Excel
+    produtos = sorted(produtos)
+
+    # Cria o arquivo Excel
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Relatório de Vendas"
+
+    # Escreve o cabeçalho
+    ws.cell(row=1, column=1, value="Nome")
+    for col_index, produto in enumerate(produtos, start=2):
+        ws.cell(row=1, column=col_index, value=produto)
+    ws.cell(row=1, column=len(produtos) + 2, value="Total Consumido")
+
+    # Preenche os dados por pessoa e produtos
+    for row_index, (nome, info) in enumerate(dados.items(), start=2):
+        ws.cell(row=row_index, column=1, value=nome)
+
+        for col_index, produto in enumerate(produtos, start=2):
+            quantidade = info['produtos'].get(produto, 0)
+            ws.cell(row=row_index, column=col_index, value=quantidade)
+
+        ws.cell(row=row_index, column=len(produtos) + 2, value=info['total'])
+
+    # Salva o arquivo temporário
+    file_name = f"relatorio_vendas - {data_inicio.strftime('%Y-%m-%d')} a {data_fim.strftime('%Y-%m-%d')}.xlsx"
+    file_path = os.path.join('relatorios', file_name)
+    wb.save(file_path)
+
+    # Retorna o arquivo como resposta
+    return send_file(file_path, as_attachment=True, download_name=file_name)
+
+
 
 @app.route("/download_database")
 def download_database():

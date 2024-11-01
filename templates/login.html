@@ -26,19 +26,23 @@
       
                     <h2 class="fw-bold mb-2 text-uppercase">Área Administrativa</h2>
                     <p class="text-white-50 mb-5">Por favor, entre com login e senha</p>
-      
+
+                    <!-- Div para mensagens de sucesso ou erro -->
+                      <div id="mensagem" style="display: none; padding: 10px;"></div> 
+
+                    <form id="login">
                     <div data-mdb-input-init class="form-outline form-white mb-4">
                         <label class="form-label" for="user">Usuário</label>
-                      <input type="user" id="user" class="form-control form-control-lg" />
+                      <input type="text" id="usuario" class="form-control form-control-lg" />
                     </div>
       
                     <div data-mdb-input-init class="form-outline form-white mb-4">
                     <label class="form-label" for="typePasswordX">Senha</label>
-                      <input type="password" id="typePasswordX" class="form-control form-control-lg" />
+                      <input type="password" id="senha" class="form-control form-control-lg" />
                     </div>
-      
+                    </form>
                           
-                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
+                    <button data-mdb-button-init data-mdb-ripple-init class="btn btn-outline-light btn-lg px-5" type="submit" id="submit">Login</button>
       
                     <div class="d-flex justify-content-center text-center mt-4 pt-1">
                       <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>

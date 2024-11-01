@@ -189,6 +189,9 @@ function mostrarProdutos() {
                         <a href="#!" data-mdb-tooltip-init title="Remove" onclick="removerProduto(${produto.id})">
                             <i class="fas fa-trash-alt fa-lg text-warning"></i>
                         </a>
+                        <a href="#!" data-mdb-tooltip-init title="Alterar" onclick="alterarProduto(${produto.id})">
+                            <i class="fa-solid fa-file-pen"></i></i>
+                        </a>
                     </td>
                 `;
                 tabelaEstoque.appendChild(novaLinha);
@@ -216,6 +219,62 @@ function removerProduto(id){
         console.log("Exclusão cancelada pelo usuário");
     }
 }
+
+function alterarProduto(id) {
+    const modal = new bootstrap.Modal(document.getElementById('alterarEstoque'));
+    modal.show();
+
+    document.getElementById('cancelar').addEventListener('click', function() {
+        modal.hide();
+    }, { once: true });
+
+    document.getElementById('salvar').addEventListener('click', function() {
+        const precoVendaInput = document.getElementById('preco_venda2').value;
+
+        // Verifica se o campo de preço de venda não está vazio
+        if (!precoVendaInput) {
+            console.error('Preço de venda não pode ser vazio!');
+            return;
+        }
+
+        // Captura o valor do preço de venda
+        const preco_venda = parseFloat(precoVendaInput.replace(',', '.'));
+
+        // Verifica se o preço é um número válido
+        if (isNaN(preco_venda)) {
+            console.error('Preço de venda inválido!');
+            return; // Sai da função se o preço não for válido
+        }
+
+        fetch(`/alterar_estoque/${id}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                preco_venda: preco_venda,
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro na requisição: ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(data);
+            if (data.message === 'Produto alterado com sucesso!') {
+                console.log('Produto alterado com sucesso!');
+                modal.hide();
+                mostrarProdutos();
+            } else {
+                console.error('Erro ao alterar o produto:', data.error);
+            }
+        })
+        .catch(error => console.error('Erro ao alterar o produto:', error));
+    }, { once: true });
+}
+
 
 //------------------------------------------- FIM FUNÇÕES PRODUTOS/ESTOQUE -------------------------------------------------
 //--------------------------------------------INÍCIO FUNÇÕES COMPRAS ----------------------------------------
@@ -474,8 +533,43 @@ function removerVendas(id){
 }
 // -------------------------------------------FIM FUNÇÕES VENDAS ---------------------------------------
 //função emissão de relatório
+document.getElementById('downloadRelatorio').addEventListener('submit', function(event) {
+    event.preventDefault(); 
+
+    const data1 = document.getElementById('data1').value;
+    const data2 = document.getElementById('data2').value;
 
 
+    fetch(`/download_relatorio`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 
+            data1: data1,
+            data2: data2
+         })
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.blob();
+        } else {
+            return response.json().then(data => { throw new Error(data.message); });
+        }
+    })
+    .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `/relatorios/relatorio_vendas (${data1} a ${data2}).xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        document.getElementById('downloadRelatorio').reset();
+    })
+    .catch(error => console.error('Erro ao enviar dados:', error));
+});
 
 
 
@@ -484,6 +578,7 @@ function removerVendas(id){
 //download de arquivos database
 document.getElementById('downloadDatabase').addEventListener('click', function(event) {
     fetch(`/download_database`, {
+        method:'GET'
     })
     .then(response => {
         if (response.ok) {
@@ -501,7 +596,31 @@ document.getElementById('downloadDatabase').addEventListener('click', function(e
         a.click();
         a.remove();
         window.URL.revokeObjectURL(url);
-        document.getElementById('downloadDatabase').reset();
     })
     .catch(error => console.error('Erro ao enviar dados:', error));
+});
+
+//Função Logout
+document.getElementById('logout').addEventListener('click', function(event) {
+    fetch(`/logout`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('Usuário deslogado com sucesso!')
+            window.location.href = "/";
+        } else {
+            console.log('Erro ao deslogar usuário');
+        }
+    })
+    .catch(error => {
+        const mensagemDiv = document.getElementById('mensagem');
+        mensagemDiv.style.display = 'block'; 
+        mensagemDiv.className = 'alert alert-danger';
+        mensagemDiv.innerHTML = 'Erro de rede ou servidor!';
+    });
 });
