@@ -11,7 +11,7 @@ from openpyxl import Workbook
 
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/img'
+app.config['UPLOAD_FOLDER'] = '/static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
 app.secret_key = os.getenv('SECRET_KEY')
@@ -470,9 +470,16 @@ def download_relatorio():
 
 
 
-@app.route("/download_database")
+
+@app.route('/download_database')
 def download_database():
-    return send_from_directory(app.config['UPLOAD_FOLDER_DB'], 'dados.db', as_attachment=True)
+    try:
+        return send_from_directory(app.config['UPLOAD_FOLDER_DB'], 'dados.db', as_attachment=True)
+    except Exception as e:
+        print("Erro ao enviar o arquivo:", e)
+        return {"message": "Erro ao enviar o arquivo."}, 500
+
+
 
 
 # ---------------------FIM FUNÇÕES MANIPULAÇÃO DE BANCO DE DADOS -----------------------
