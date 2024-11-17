@@ -210,7 +210,7 @@ def cadastrar_pessoal():
 
 @app.route('/mostrar_pessoal')
 def mostrar_pessoal():
-    pessoal = Pessoal.select()
+    pessoal = Pessoal.select().order_by(Pessoal.nome)
     lista_pessoal =[]
 
     for pessoais in pessoal:
