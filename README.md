@@ -1,95 +1,96 @@
-Flask Application with Telegram Integration
-This Flask application serves as a management system for handling personnel, stock, purchases, and sales. It integrates with a Telegram bot to allow users to interact with the system directly from Telegram. The app also supports user authentication, file upload, and data manipulation through a SQLite database.
+# Projeto de Gerenciamento de Estoque e Vendas
 
-Features
-Personnel Management: Register and manage personnel details.
-Product Management: Add, modify, and remove products from the stock.
-Sales Management: Register sales, calculate total value, and store transaction data.
-Purchases Management: Register and track product purchases.
-Telegram Bot Integration: Register personnel in the system via a Telegram bot, and send notifications to users on Telegram when purchases are made.
-User Authentication: Login and logout functionalities with Flask-Login.
-Prerequisites
-Before running this application, ensure that you have the following installed:
+Este projeto foi desenvolvido utilizando o Flask, com a integração de banco de dados SQLite e funcionalidades de bot Telegram para notificações automáticas. A aplicação permite o cadastro de pessoal, produtos, vendas e compras, além de oferecer uma interface para administração e controle de estoque.
 
-Python 3.x
+## Funcionalidades
+
+- **Login de Administrador**: Controle de acesso com autenticação utilizando Flask-Login.
+- **Cadastro de Pessoal**: Permite o cadastro de pessoal com nome, posto, telefone e chat_id para integração com o Telegram.
+- **Cadastro de Produtos**: Adição de produtos ao estoque com informações como categoria, unidade, tamanho, quantidade e preço de venda.
+- **Registro de Vendas e Compras**: Cadastro de vendas e compras, com atualizações automáticas no estoque.
+- **Integração com Telegram**: Bot Telegram que envia notificações ao pessoal cadastrado sobre compras realizadas em seu nome.
+- **Interface de Administração**: Visualização e manipulação de dados (produtos, vendas, compras e pessoal) via interface web.
+
+## Instalação
+
+### Pré-requisitos
+
+- Python 3.8 ou superior
+- Instalar as dependências do projeto:
+  
+  ```bash
+  pip install -r requirements.txt
+As dependências incluem:
+
 Flask
 Flask-Login
-Peewee (SQLite ORM)
-OpenPyXL (for Excel file handling)
-TeleBot (for Telegram Bot integration)
-You also need to set up the following environment variables:
+peewee
+openpyxl
+telebot
+werkzeug
+Configuração do Banco de Dados
+O projeto utiliza o banco de dados SQLite para armazenar informações de pessoal, produtos, compras e vendas. A tabela será criada automaticamente ao rodar o servidor Flask.
 
-SECRET_KEY: Secret key for session management.
-DATABASE_USUARIO: Database username.
-DATABASE_SENHA: Database password.
-TELEGRAM_TOKEN: Your Telegram bot token.
-Installation
-Clone the repository:
+Configuração do Telegram
+Você precisa de um bot no Telegram para enviar notificações. Crie um bot no Telegram com o BotFather e obtenha um TOKEN. Adicione o token ao arquivo .env:
 
-bash
+env
 Copiar código
-git clone https://github.com/yourusername/your-repository.git
-cd your-repository
-Create a virtual environment:
-
-bash
-Copiar código
-python3 -m venv venv
-source venv/bin/activate  # For Linux/macOS
-venv\Scripts\activate     # For Windows
-Install dependencies:
-
-bash
-Copiar código
-pip install -r requirements.txt
-Set the necessary environment variables (adjust according to your environment):
-
-bash
-Copiar código
-export SECRET_KEY='your_secret_key'
-export DATABASE_USUARIO='your_database_username'
-export DATABASE_SENHA='your_database_password'
-export TELEGRAM_TOKEN='your_telegram_bot_token'
-Run the application:
+TELEGRAM_TOKEN=<Seu Token do Bot Telegram>
+SECRET_KEY=<Sua chave secreta do Flask>
+DATABASE_USUARIO=<Usuário do banco de dados>
+DATABASE_SENHA=<Senha do banco de dados>
+Rodando o Servidor
+Para rodar o servidor Flask, utilize o comando abaixo:
 
 bash
 Copiar código
 python app.py
-Usage
-Telegram Bot
-The Telegram bot allows personnel to register and receive notifications. Upon running the bot, users can select their names from a list, and their chat_id will be saved to the database.
-Commands:
-/start: Displays a list of registered personnel for selection.
-The user selects their name, and the bot responds with a confirmation.
-Web Application
-The application provides a web interface with several routes:
-/: The homepage of the application.
-/pagina_login: The login page.
-/protected: The protected admin page (requires login).
-/sucesso: A success page.
-/error: An error page.
-API Endpoints
-The application exposes several API endpoints for data manipulation:
+Isso iniciará a aplicação na URL http://localhost:5000.
 
-Personnel Management:
-POST /cadastrar_pessoal: Registers a new person.
-GET /mostrar_pessoal: Displays all registered personnel.
-DELETE /remover_pessoal/<id>: Removes a person by ID.
-Product Management:
-POST /cadastrar_produto: Registers a new product.
-GET /mostrar_produtos: Displays all products.
-DELETE /remover_produto/<id>: Removes a product by ID.
-POST /alterar_estoque/<id>: Updates product stock information.
-Purchase Management:
-POST /cadastrar_compra: Registers a new purchase.
-GET /mostrar_compras: Displays all purchases.
-DELETE /remover_compra/<id>: Removes a purchase by ID.
-Sale Management:
-POST /cadastrar_venda: Registers a new sale.
-Contributing
-Contributions are welcome! Please fork the repository, create a new branch, make your changes, and submit a pull request.
+Rodando o Bot Telegram
+O bot do Telegram será iniciado automaticamente, mas para garantir que ele funcione corretamente em paralelo com o servidor Flask, execute a função de polling de forma assíncrona, para que o bot receba e envie mensagens:
 
-License
-This project is licensed under the MIT License - see the LICENSE file for details.
+bash
+Copiar código
+python app.py
+O bot ficará ativo aguardando interações e enviando notificações de compras.
 
-Feel free to adjust the instructions, file paths, and environment variable details according to your specific project setup.
+Endpoints
+A aplicação possui os seguintes endpoints:
+
+Autenticação
+POST /login: Realiza o login do administrador.
+Dados: usuario, senha
+POST /logout: Realiza o logout do administrador.
+Pessoal
+POST /cadastrar_pessoal: Cadastra um novo pessoal.
+Dados: posto, nome, telefone, chat_id
+GET /mostrar_pessoal: Exibe todos os pessoais cadastrados.
+DELETE /remover_pessoal/<id>: Remove um pessoal pelo ID.
+Produtos
+POST /cadastrar_produto: Cadastra um novo produto no estoque.
+Dados: produto, tamanho, unidade, categoria, preco_venda, foto
+GET /mostrar_produtos: Exibe todos os produtos cadastrados.
+DELETE /remover_produto/<id>: Remove um produto pelo ID.
+POST /alterar_estoque/<id>: Altera o preço de venda de um produto.
+Compras
+POST /cadastrar_compra: Registra uma compra de um produto.
+Dados: produto, preco_compra, quantidade, data
+GET /mostrar_compras: Exibe todas as compras realizadas.
+DELETE /remover_compra/<id>: Remove uma compra pelo ID.
+Vendas
+POST /cadastrar_venda: Registra uma venda.
+Dados: nome, produtosSelecionados
+GET /mostrar_vendas: Exibe todas as vendas realizadas.
+DELETE /remover_venda/<id>: Remove uma venda pelo ID.
+Tecnologias Utilizadas
+Flask: Framework web para Python.
+Flask-Login: Gerenciamento de sessões de login.
+Peewee: ORM para interagir com o banco de dados SQLite.
+SQLite: Banco de dados para armazenar os dados.
+Telegram Bot API: Integração com Telegram para notificações.
+Contribuições
+Sinta-se à vontade para contribuir para o projeto! Faça um fork do repositório, faça suas modificações e envie um pull request.
+
+Nota: Este projeto foi desenvolvido para fins de estudo e como uma aplicação funcional para gerenciar estoque e vendas. Melhorias e novas funcionalidades podem ser adicionadas conforme a necessidade.
