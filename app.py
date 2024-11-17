@@ -30,7 +30,7 @@ bot = telebot.TeleBot(TOKEN)
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
     # Busca todos os nomes na tabela Pessoal
-    nomes = Pessoal.select()
+    nomes = Pessoal.select().order_by(Pessoal.nome)
 
     if nomes.exists():
         # Cria os botões inline com os nomes e postos
