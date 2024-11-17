@@ -20,15 +20,15 @@ Este projeto foi desenvolvido utilizando o Flask, com a integração de banco de
   
   ```bash
   pip install -r requirements.txt
-As dependências incluem:
+### As dependências incluem:
 
-Flask
-Flask-Login
-peewee
-openpyxl
-telebot
-werkzeug
-Configuração do Banco de Dados
+- Flask
+- Flask-Login
+- peewee
+- openpyxl
+- telebot
+- werkzeug
+- Configuração do Banco de Dados:
 O projeto utiliza o banco de dados SQLite para armazenar informações de pessoal, produtos, compras e vendas. A tabela será criada automaticamente ao rodar o servidor Flask.
 
 Configuração do Telegram
