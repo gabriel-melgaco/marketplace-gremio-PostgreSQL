@@ -8,6 +8,8 @@ from werkzeug.utils import secure_filename
 import unicodedata
 import re
 from openpyxl import Workbook
+import threading
+import telebot
 
 
 
@@ -15,13 +17,63 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
-app.secret_key = '123' #os.getenv('SECRET_KEY')
-app.config['usuario'] = 'admin' #os.getenv('DATABASE_USUARIO')
-app.config['senha'] = 'brasil123' #os.getenv('DATABASE_SENHA')
+app.secret_key = os.getenv('SECRET_KEY')
+app.config['usuario'] = os.getenv('DATABASE_USUARIO')
+app.config['senha'] = os.getenv('DATABASE_SENHA')
+TOKEN = os.getenv('TELEGRAM_TOKEN')
+
+#------------TELEGRAM CONFIGS --------------------------------------
+# Configuração do Telegram Bot
+bot = telebot.TeleBot(TOKEN)
 
 
+@bot.message_handler(commands=['start'])
+def send_welcome(message):
+    # Busca todos os nomes na tabela Pessoal
+    nomes = Pessoal.select()
+
+    if nomes.exists():
+        # Cria os botões inline com os nomes e postos
+        markup = telebot.types.InlineKeyboardMarkup()
+        for pessoa in nomes:
+            # Exibe nome e posto no botão
+            markup.add(
+                telebot.types.InlineKeyboardButton(
+                    f"{pessoa.posto} {pessoa.nome}",  # Exibe "Posto Nome"
+                    callback_data=f"pessoa_{pessoa.id}"
+                )
+            )
+
+        bot.send_message(message.chat.id, "Selecione seu nome:", reply_markup=markup)
+    else:
+        bot.send_message(message.chat.id, "Não há nomes cadastrados no momento.")
 
 
+@bot.callback_query_handler(func=lambda call: call.data.startswith('pessoa_'))
+def handle_nome_selection(call):
+    # Extrai o ID da pessoa a partir do callback_data
+    pessoa_id = int(call.data.split('_')[1])
+    pessoa = Pessoal.get_by_id(pessoa_id)
+
+    # Captura o chat_id do usuário do Telegram
+    chat_id = call.message.chat.id
+
+    # Atualiza o campo chat_id no banco de dados
+    pessoa.chat_id = chat_id
+    print(chat_id)
+    pessoa.save()
+
+    # Responde a interação com uma mensagem de confirmação
+    bot.answer_callback_query(call.id, f"Você selecionou: {pessoa.posto} {pessoa.nome}")
+    bot.send_message(call.message.chat.id, f"Olá, {pessoa.posto} {pessoa.nome}! Seu chat_id foi registrado com sucesso. \n Para sua segurança, você receberá notificações quando realizar compras em seu nome!")
+
+# Função para rodar o Flask
+def run_flask():
+    app.run(host='0.0.0.0', port=5000)
+
+# Função para rodar o Telebot
+def run_telebot():
+    bot.infinity_polling()
 #-------------LOGIN MANAGER ---------------------------------------
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -291,6 +343,7 @@ def cadastrar_compra():
     quantidade = data.get('quantidade')
     data_compra = data.get('data')
 
+
     try:
         # Verifica se o produto existe no estoque usando o nome
         produto = Estoque.get(Estoque.produto == produto_nome)
@@ -352,6 +405,8 @@ def cadastrar_venda():
     data = request.json
     nome = data.get('nome')
     produtosSelecionados = data.get('produtosSelecionados')
+    pessoal = Pessoal.select()
+    pessoa = Pessoal.get(Pessoal.nome == nome)
 
     try:
 
@@ -366,9 +421,17 @@ def cadastrar_venda():
             produto.quantidade -= int(quantidade)
             produto.save()
 
-
     except Exception as e:
         return jsonify({'status': 'error', 'message': f'Erro ao salvar no banco de dados: {str(e)}'}), 500
+
+        # Envia mensagem no Telegram se a pessoa for encontrada
+    if pessoa and pessoa.chat_id:
+        try:
+            # Envia uma mensagem para o chat_id da pessoa com os detalhes da venda
+            bot.send_message(pessoa.chat_id,
+                                f"Olá {nome}, \n Venda cadastrada com sucesso! \nProdutos: {', '.join([venda['produto'] for venda in produtosSelecionados])}.\nTotal: R$ {sum([venda['preco_total'] for venda in produtosSelecionados])}. \n\nSe não foi você quem fez essa compra, contate à administração do Grêmio!")
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': f'Erro ao enviar mensagem no Telegram: {str(e)}'}), 500
 
     return jsonify({'status': 'success', 'message': 'Venda cadastrada com sucesso!'})
 
@@ -410,6 +473,7 @@ def remover_venda(id):
 
 
 @app.route('/download_relatorio', methods=['POST'])
+@login_required
 def download_relatorio():
     data = request.json
     data1 = data.get('data1')
@@ -478,6 +542,7 @@ def download_relatorio():
 
 
 @app.route('/download_database')
+@login_required
 def download_database():
     try:
         return send_from_directory(app.config['UPLOAD_FOLDER_DB'], 'dados.db', as_attachment=True)
@@ -491,5 +556,15 @@ def download_database():
 # ---------------------FIM FUNÇÕES MANIPULAÇÃO DE BANCO DE DADOS -----------------------
 
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    # Criar e iniciar as threads
+    flask_thread = threading.Thread(target=run_flask)
+    telebot_thread = threading.Thread(target=run_telebot)
+
+    flask_thread.start()
+    telebot_thread.start()
+
+    flask_thread.join()
+    telebot_thread.join()
+
+
