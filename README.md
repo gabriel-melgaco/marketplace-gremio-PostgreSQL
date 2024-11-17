@@ -59,37 +59,43 @@ O bot ficará ativo aguardando interações e enviando notificações de compras
 Endpoints
 A aplicação possui os seguintes endpoints:
 
-Autenticação
+## Autenticação
 POST /login: Realiza o login do administrador.
 Dados: usuario, senha
 POST /logout: Realiza o logout do administrador.
-Pessoal
+
+## Pessoal
 POST /cadastrar_pessoal: Cadastra um novo pessoal.
 Dados: posto, nome, telefone, chat_id
 GET /mostrar_pessoal: Exibe todos os pessoais cadastrados.
 DELETE /remover_pessoal/<id>: Remove um pessoal pelo ID.
-Produtos
+
+## Produtos
 POST /cadastrar_produto: Cadastra um novo produto no estoque.
 Dados: produto, tamanho, unidade, categoria, preco_venda, foto
 GET /mostrar_produtos: Exibe todos os produtos cadastrados.
 DELETE /remover_produto/<id>: Remove um produto pelo ID.
 POST /alterar_estoque/<id>: Altera o preço de venda de um produto.
-Compras
+
+## Compras
 POST /cadastrar_compra: Registra uma compra de um produto.
 Dados: produto, preco_compra, quantidade, data
 GET /mostrar_compras: Exibe todas as compras realizadas.
 DELETE /remover_compra/<id>: Remove uma compra pelo ID.
-Vendas
+
+## Vendas
 POST /cadastrar_venda: Registra uma venda.
 Dados: nome, produtosSelecionados
 GET /mostrar_vendas: Exibe todas as vendas realizadas.
 DELETE /remover_venda/<id>: Remove uma venda pelo ID.
-Tecnologias Utilizadas
-Flask: Framework web para Python.
-Flask-Login: Gerenciamento de sessões de login.
-Peewee: ORM para interagir com o banco de dados SQLite.
-SQLite: Banco de dados para armazenar os dados.
-Telegram Bot API: Integração com Telegram para notificações.
+
+## Tecnologias Utilizadas
+- Flask: Framework web para Python.
+- Flask-Login: Gerenciamento de sessões de login.
+- Peewee: ORM para interagir com o banco de dados SQLite.
+- SQLite: Banco de dados para armazenar os dados.
+- Telegram Bot API: Integração com Telegram para notificações.
+
 Contribuições
 Sinta-se à vontade para contribuir para o projeto! Faça um fork do repositório, faça suas modificações e envie um pull request.
 
