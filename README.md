@@ -49,8 +49,6 @@ Isso iniciará a aplicação na URL http://localhost:5000.
 **Rodando o Bot Telegram**
 O bot do Telegram será iniciado automaticamente, mas para garantir que ele funcione corretamente em paralelo com o servidor Flask, execute a função de polling de forma assíncrona, para que o bot receba e envie mensagens:
 
-bash
-Copiar código
 python app.py
 O bot ficará ativo aguardando interações e enviando notificações de compras.
 
@@ -63,17 +61,17 @@ Dados: usuario, senha
 POST /logout: Realiza o logout do administrador.
 
 ## Pessoal
-POST /cadastrar_pessoal: Cadastra um novo pessoal.
-Dados: posto, nome, telefone, chat_id
-GET /mostrar_pessoal: Exibe todos os pessoais cadastrados.
-DELETE /remover_pessoal/<id>: Remove um pessoal pelo ID.
+<p>POST /cadastrar_pessoal: Cadastra um novo pessoal.
+Dados: posto, nome, telefone, chat_id</p>
+<p>GET /mostrar_pessoal: Exibe todos os pessoais cadastrados.</p>
+<p>DELETE /remover_pessoal/<id>: Remove um pessoal pelo ID.</p>
 
 ## Produtos
-POST /cadastrar_produto: Cadastra um novo produto no estoque.
-Dados: produto, tamanho, unidade, categoria, preco_venda, foto
-GET /mostrar_produtos: Exibe todos os produtos cadastrados.
-DELETE /remover_produto/<id>: Remove um produto pelo ID.
-POST /alterar_estoque/<id>: Altera o preço de venda de um produto.
+<p>POST /cadastrar_produto: Cadastra um novo produto no estoque.
+Dados: produto, tamanho, unidade, categoria, preco_venda, foto</p>
+<p>GET /mostrar_produtos: Exibe todos os produtos cadastrados.</p>
+<p>DELETE /remover_produto/<id>: Remove um produto pelo ID.</p>
+<p>POST /alterar_estoque/<id>: Altera o preço de venda de um produto.</p>
 
 ## Compras
 POST /cadastrar_compra: Registra uma compra de um produto.
