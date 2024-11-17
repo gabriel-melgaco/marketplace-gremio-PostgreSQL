@@ -31,25 +31,22 @@ Este projeto foi desenvolvido utilizando o Flask, com a integração de banco de
 - Configuração do Banco de Dados:
 O projeto utiliza o banco de dados SQLite para armazenar informações de pessoal, produtos, compras e vendas. A tabela será criada automaticamente ao rodar o servidor Flask.
 
-Configuração do Telegram
+**Configuração do Telegram**
 Você precisa de um bot no Telegram para enviar notificações. Crie um bot no Telegram com o BotFather e obtenha um TOKEN. Adicione o token ao arquivo .env:
 
-env
-Copiar código
-- TELEGRAM_TOKEN=<Seu Token do Bot Telegram>
-- SECRET_KEY=<Sua chave secreta do Flask>
-- DATABASE_USUARIO=<Usuário do banco de dados>
-- DATABASE_SENHA=<Senha do banco de dados>
+**Você precisará criar as seguintes chaves no sistema**
+- TELEGRAM_TOKEN=
+- SECRET_KEY=
+- DATABASE_USUARIO=
+- DATABASE_SENHA=
 
-Rodando o Servidor
+**Rodando o Servidor**
 Para rodar o servidor Flask, utilize o comando abaixo:
-
-bash
-Copiar código
 python app.py
+
 Isso iniciará a aplicação na URL http://localhost:5000.
 
-Rodando o Bot Telegram
+**Rodando o Bot Telegram**
 O bot do Telegram será iniciado automaticamente, mas para garantir que ele funcione corretamente em paralelo com o servidor Flask, execute a função de polling de forma assíncrona, para que o bot receba e envie mensagens:
 
 bash
