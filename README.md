@@ -36,10 +36,11 @@ Você precisa de um bot no Telegram para enviar notificações. Crie um bot no T
 
 env
 Copiar código
-TELEGRAM_TOKEN=<Seu Token do Bot Telegram>
-SECRET_KEY=<Sua chave secreta do Flask>
-DATABASE_USUARIO=<Usuário do banco de dados>
-DATABASE_SENHA=<Senha do banco de dados>
+- TELEGRAM_TOKEN=<Seu Token do Bot Telegram>
+- SECRET_KEY=<Sua chave secreta do Flask>
+- DATABASE_USUARIO=<Usuário do banco de dados>
+- DATABASE_SENHA=<Senha do banco de dados>
+
 Rodando o Servidor
 Para rodar o servidor Flask, utilize o comando abaixo:
 
