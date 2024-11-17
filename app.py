@@ -429,7 +429,7 @@ def cadastrar_venda():
         try:
             # Envia uma mensagem para o chat_id da pessoa com os detalhes da venda
             bot.send_message(pessoa.chat_id,
-                                f"Olá {nome}, \n Venda cadastrada com sucesso! \nProdutos: {', '.join([venda['produto'] for venda in produtosSelecionados])}.\nTotal: R$ {sum([venda['preco_total'] for venda in produtosSelecionados])}. \n\nSe não foi você quem fez essa compra, contate à administração do Grêmio!")
+                                f"Olá {nome}, \nCompra realizada com sucesso! \nProdutos: {', '.join([venda['produto'] for venda in produtosSelecionados])}.\nTotal: R$ {sum([venda['preco_total'] for venda in produtosSelecionados])}. \n\nSe não foi você quem realizou essa compra, contate a administração do Grêmio!")
         except Exception as e:
             return jsonify({'status': 'error', 'message': f'Erro ao enviar mensagem no Telegram: {str(e)}'}), 500
 
