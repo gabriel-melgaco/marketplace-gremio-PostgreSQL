@@ -74,16 +74,16 @@ Dados: produto, tamanho, unidade, categoria, preco_venda, foto</p>
 <p>POST /alterar_estoque/<id>: Altera o preço de venda de um produto.</p>
 
 ## Compras
-POST /cadastrar_compra: Registra uma compra de um produto.
-Dados: produto, preco_compra, quantidade, data
-GET /mostrar_compras: Exibe todas as compras realizadas.
-DELETE /remover_compra/<id>: Remove uma compra pelo ID.
+<p>POST /cadastrar_compra: Registra uma compra de um produto.
+Dados: produto, preco_compra, quantidade, data</p>
+<p>GET /mostrar_compras: Exibe todas as compras realizadas.</p>
+<p>DELETE /remover_compra/<id>: Remove uma compra pelo ID.</p>
 
 ## Vendas
-POST /cadastrar_venda: Registra uma venda.
+<p>POST /cadastrar_venda: Registra uma venda.</p>
 Dados: nome, produtosSelecionados
-GET /mostrar_vendas: Exibe todas as vendas realizadas.
-DELETE /remover_venda/<id>: Remove uma venda pelo ID.
+<p>GET /mostrar_vendas: Exibe todas as vendas realizadas.</p>
+<p>DELETE /remover_venda/<id>: Remove uma venda pelo ID.</p>
 
 ## Tecnologias Utilizadas
 - Flask: Framework web para Python.
