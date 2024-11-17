@@ -1,10 +1,19 @@
-body{
-    font-family: "Oxanium", sans-serif;
-    font-optical-sizing: auto;
-    font-weight: <weight>;
-    font-style: normal;
-   
-  }
+body {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  font-family: "Oxanium", sans-serif;
+  background-color: #1f1388;
+}
+
+section {
+  flex: 1; /* Expande para ocupar o espaço restante, empurrando o footer para baixo */
+}
+
+  #main-content {
+    flex: 1; /* Ocupa o espaço restante */
+}
 
   .total{
     font-size: 30px;
@@ -24,27 +33,6 @@ body{
 
     /* Back to top button */
 
-.back-to-top {
-  position: fixed;
-  display: none;
-  background: #0078ff;
-  color: #fff;
-  width: 44px;
-  height: 44px;
-  text-align: center;
-  line-height: 1;
-  font-size: 16px;
-  border-radius: 50%;
-  right: 15px;
-  bottom: 15px;
-  transition: background 0.5s;
-  z-index: 100;
-}
-
-.back-to-top i {
-  padding-top: 12px;
-  color: #fff;
-}
 
 .whatsapp-link {
   position: fixed;
@@ -71,4 +59,30 @@ body{
   font-size: 7px; /* Tamanho menor para o valor */
   color: #404F5E; /* Cor do valor */
   margin: 0; /* Remove margens ao redor */
+}
+
+header {
+  position: fixed;
+  top: 0; /* Posiciona o header no topo da página */
+  left: 0; /* Alinha o header à borda esquerda */
+  width: 100vw; /* Largura total da janela de visualização */
+  height: 70px; /* Altura do header, ajuste conforme necessário */
+  z-index: 1000;
+  background-color: #F8F9FA; /* Cor de fundo do header */
+  color: white; /* Cor do texto */
+  display: flex;
+  align-items: center; /* Centraliza o conteúdo verticalmente */
+  justify-content: center; /* Centraliza o conteúdo horizontalmente */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Sombras para dar profundidade */
+}
+
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #F8F9FA; /* Cor de fundo do footer */
+  color: #000000; /* Cor do texto */
+  box-shadow: 0px -2px 8px rgba(0, 0, 0, 0.2); /* Sombras para dar profundidade */
+  width: 100%;
+  
 }

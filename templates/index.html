@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="static/img/1bavex.png" type="image">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oxanium:wght@200..800&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -11,7 +12,23 @@
     <link href="/static/css/style.css" rel="stylesheet">
   </head>
   <body>
-    <section class="h-100 h-custom shadow" style="background-color: #1f1388;">
+<!-- HEADER-->
+ <header>
+    <nav class="navbar navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="static/img/1bavex.png" alt="" width="26" height="26" class="d-inline-block align-text-top">
+          Grêmio Falcão
+          <button onclick="rolarParaCategoria('bebida')" class="btn btn-sm btn-outline-secondary" type="button">Bebidas</button>
+          <button onclick="rolarParaCategoria('comida')" class="btn btn-sm btn-outline-secondary" type="button">Comidas</button>
+          <button href="#finalizar" href="#" onclick="scrollToFooter()" class="btn btn-outline-success me-2" type="button">Finalizar</button>
+        </a>
+      </div>
+    </nav>
+  </header>
+<!-- FIM DO HEADER-->
+
+    <section class="h-100 h-custom shadow">
       <div class="container py-5 h-100 shadow" >
         <div class="row d-flex justify-content-center align-items-center h-100" >
           <div class="col">
@@ -21,12 +38,11 @@
                 <div class="row">
     
                   <div class="col-lg-7 ">
-                    <img src="static/img/1bavex.png" class="img-fluid mx-auto d-block" width="90" height="90">
                     
                     <hr>
                     <div class="navegacao d-flex  align-items-center mb-4">
                       <div>
-                        <p class="mb-1">Indenizáveis Grêmio Falcão - Carrinho de Compras</p>
+                        <p class="mb-1">Indenizáveis - Carrinho de Compras</p>
                       </div>
                     </div>
                     
@@ -47,6 +63,7 @@
                             <label class="form-label" for="typeName">Selecione a conta:</label>
                             <div class="form-group">
                               <select class="form-control" name="nome" id="listaPessoal" required>
+                                <!--renderiza a lista de pessoas aqui-->
                               </select>
                             </div>
                           </div>
@@ -97,22 +114,22 @@
           </div>
         </div>
       </div>
-      <footer id="footer"class="bg-body-tertiary text-center text-lg-start">
-        <!-- Copyright -->
-        <div class="text-center p-3" style="background-color: rgb(255, 255, 255);">
+
+      <footer id="footer">
+        <div class="text-center p-3">
           © 2024 Copyright:
           <a class="text-body" href="https://github.com/gabriel-melgaco?tab=repositories" target="blank">MEG_DEV_</a>
           <a href="/pagina_login"><i class="fa-solid fa-gear"></i></a>
         </div>
-        <!-- Copyright -->
-        <a class="whatsapp-link" href="#" onclick="scrollToFooter()"><i class="fa-solid fa-basket-shopping"></i><p class="totalValor">R$0,00</p></a>
       </footer>
-
+    
+      <a class="whatsapp-link" href="#" onclick="scrollToFooter()"><i class="fa-solid fa-basket-shopping"></i><p class="totalValor">R$0,00</p></a>
 
     </section>
       <script src="/static/js/bootstrap.js"></script>
       <script src="/static/js/index.js"></script>
       <!-- Font Awesome -->
       <script src="https://kit.fontawesome.com/9cf3f4ac1c.js" crossorigin="anonymous"></script>
+      
   </body>
 </html>

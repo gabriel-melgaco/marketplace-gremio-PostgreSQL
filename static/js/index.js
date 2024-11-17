@@ -18,6 +18,7 @@ function mostrarProdutos() {
             data.forEach(produto => {
                 const novaLinha = document.createElement('div');
                 novaLinha.innerHTML = `
+                <section id="${produto.categoria}">
                 <div class="card mb-3 shadow">
                     <div class="card-body">
                           <div class="d-flex justify-content-between">
@@ -53,6 +54,7 @@ function mostrarProdutos() {
                           </div>
                       </div>
                 </div>
+                </section>
                 `;
                 containerList.appendChild(novaLinha);
             });
@@ -78,6 +80,7 @@ function mostrarListaPessoal() {
             data.forEach(pessoal => {
                 const novaLinha = document.createElement('option');
                 novaLinha.value = pessoal.nome;
+                novaLinha.setAttribute('data-id', pessoal.id);
                 novaLinha.textContent = `${pessoal.posto} ${pessoal.nome}`;
                 listaPessoal.appendChild(novaLinha);
             });
@@ -197,6 +200,16 @@ document.getElementById('submit').addEventListener('click', function(event) {
         .catch(error => console.error('Erro ao cadastrar a venda:', error));
     }, { once: true });
 });
+
+
+// função para rolar até o elemento
+function rolarParaCategoria(categoria) {
+    const elemento = document.getElementById(categoria);
+    if (elemento) {
+        elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
 
 
 

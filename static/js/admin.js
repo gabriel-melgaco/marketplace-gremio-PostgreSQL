@@ -41,6 +41,7 @@ document.getElementById('cadastrarPessoal').addEventListener('submit', function(
     const posto = document.getElementById('posto').value;
     const nome = document.getElementById('nome').value.toUpperCase(); // Converter nome para maiúsculas
     const telefone = document.getElementById('telefone').value;
+    const ChatId = document.getElementById('chat_id').value;
 
     fetch(`/cadastrar_pessoal`, {
         method: 'POST',
@@ -50,7 +51,8 @@ document.getElementById('cadastrarPessoal').addEventListener('submit', function(
         body: JSON.stringify({
             posto: posto,
             nome: nome,
-            telefone: telefone
+            telefone: telefone,
+            chat_id: ChatId
         })
     })
     .then(response => response.json())
@@ -91,6 +93,7 @@ function mostrarPessoal() {
                     <td>${pessoal.posto}</td>
                     <td>${pessoal.nome}</td>
                     <td>${pessoal.telefone}</td>
+                    <td>${pessoal.chat_id}</td>
                     <td class="align-middle">
                         <a href="#!" data-mdb-tooltip-init title="Remove" onclick="removerPessoal(${pessoal.id})">
                             <i class="fas fa-trash-alt fa-lg text-warning"></i>
@@ -575,30 +578,6 @@ document.getElementById('downloadRelatorio').addEventListener('submit', function
 
 
 
-//download de arquivos database
-document.getElementById('downloadDatabase').addEventListener('click', function(event) {
-    fetch(`/download_database`, {
-        method:'GET'
-    })
-    .then(response => {
-        if (response.ok) {
-            return response.blob();
-        } else {
-            return response.json().then(data => { throw new Error(data.message); });
-        }
-    })
-    .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'dados.db';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-    })
-    .catch(error => console.error('Erro ao enviar dados:', error));
-});
 
 //Função Logout
 document.getElementById('logout').addEventListener('click', function(event) {

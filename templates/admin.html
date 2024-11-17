@@ -4,6 +4,7 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="static/img/1bavex.png" type="image">
 
     <!-- Bootstrap CSS -->
     <link href="/static/css/bootstrap.css" rel="stylesheet">
@@ -125,8 +126,11 @@
                         <input type="text" class="form-control" placeholder="Nome de Guerra" id="nome" required>
                     </div>
                     <div class="col">
-                        <input type="number" class="form-control" placeholder="Telefone" id="telefone" required>
+                        <input type="number" class="form-control" placeholder="Telefone" id="telefone">
                     </div>
+                    <div class="col">
+                      <input type="number" class="form-control" placeholder="Chat-ID (Telegram)" id="chat_id">
+                  </div>
                     <div class="col">
                         <button type="submit" class="btn btn-block btn-lg"> 
                             <div class="d-flex justify-content-between">
@@ -150,6 +154,7 @@
                         <th scope="col">Posto</th>
                         <th scope="col">Nome</th>
                         <th scope="col">Telefone</th>
+                        <th scope="col">Chat ID (Telegram)</th>
                         <th scope="col">Ações</th>
                     </tr>
                 </thead>
@@ -422,7 +427,7 @@
           <h5>Fazer download de arquivo Backup:</h5>
           <form id="downloadDatabase">
             <div class="col">
-              <button type="submit" class="btn btn-block btn-lg">
+              <button href='/download_database' type="submit" class="btn btn-block btn-lg">
                 <div class="d-flex justify-content-between">
                   <i class="fa-solid fa-download"></i>
                 </div>

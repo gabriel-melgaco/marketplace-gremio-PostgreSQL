@@ -10,13 +10,16 @@ import re
 from openpyxl import Workbook
 
 
+
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = '/static/img'
+app.config['UPLOAD_FOLDER'] = 'static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
-app.secret_key = os.getenv('SECRET_KEY')
-app.config['usuario'] = os.getenv('DATABASE_USUARIO')
-app.config['senha'] = os.getenv('DATABASE_SENHA')
+app.secret_key = '123' #os.getenv('SECRET_KEY')
+app.config['usuario'] = 'admin' #os.getenv('DATABASE_USUARIO')
+app.config['senha'] = 'brasil123' #os.getenv('DATABASE_SENHA')
+
+
 
 
 #-------------LOGIN MANAGER ---------------------------------------
@@ -30,7 +33,8 @@ class Pessoal(Model):
     id = IntegerField(primary_key=True, unique=True)
     posto = CharField()
     nome = CharField(unique=True)
-    telefone = IntegerField()
+    telefone = IntegerField(null=True)
+    chat_id = IntegerField(null=True)
 
     class Meta:
         database = db
@@ -141,10 +145,11 @@ def cadastrar_pessoal():
     posto = data.get('posto')
     nome = data.get('nome')
     telefone = data.get('telefone')
+    chat_id = data.get('chat_id')
 
     try:
 
-        Pessoal.create(posto=posto, nome=nome, telefone=telefone)
+        Pessoal.create(posto=posto, nome=nome, telefone=telefone, chat_id=chat_id)
         return jsonify({"status": "success"}), 200
 
     except IntegrityError as e:
@@ -161,7 +166,8 @@ def mostrar_pessoal():
             'id': pessoais.id,
             'posto': pessoais.posto,
             'nome': pessoais.nome,
-            'telefone': pessoais.telefone
+            'telefone': pessoais.telefone,
+            'chat_id' : pessoais.chat_id
         })
     return jsonify(lista_pessoal)
 
@@ -226,7 +232,7 @@ def cadastrar_produto():
 
 @app.route('/mostrar_produtos')
 def mostrar_produtos():
-    estoque = Estoque.select()
+    estoque = Estoque.select().order_by(Estoque.categoria.asc(), Estoque.produto.asc())
     lista_estoque =[]
 
     for produto in estoque:
@@ -483,6 +489,7 @@ def download_database():
 
 
 # ---------------------FIM FUNÇÕES MANIPULAÇÃO DE BANCO DE DADOS -----------------------
+
 
 if __name__ == '__main__':
     app.run(debug=True)
