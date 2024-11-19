@@ -44,7 +44,7 @@ def send_welcome(message):
                 )
             )
 
-        bot.send_message(message.chat.id, "Selecione seu nome:", reply_markup=markup)
+        bot.send_message(message.chat.id, "Pra prosseguir com o cadastro, selecione seu nome:", reply_markup=markup)
     else:
         bot.send_message(message.chat.id, "Não há nomes cadastrados no momento.")
 
