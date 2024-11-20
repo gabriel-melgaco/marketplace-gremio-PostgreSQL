@@ -1,6 +1,6 @@
 # Projeto de Gerenciamento de Estoque e Vendas
 
-Este projeto foi desenvolvido utilizando o Flask, com a integração de banco de dados SQLite e funcionalidades de bot Telegram para notificações automáticas. A aplicação permite o cadastro de pessoal, produtos, vendas e compras, além de oferecer uma interface para administração e controle de estoque.
+Este projeto foi desenvolvido utilizando o Flask, com a integração de banco de dados PostGreSQL e funcionalidades de bot Telegram para notificações automáticas. A aplicação permite o cadastro de pessoal, produtos, vendas e compras, além de oferecer uma interface para administração e controle de estoque.
 
 ## Funcionalidades
 
