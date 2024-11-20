@@ -9,6 +9,11 @@ function scrollToFooter() {
 
 // Função para exibir produtos no carrinho
 function mostrarProdutos() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    
+    // Exibe o spinner antes de iniciar o fetch
+    loadingSpinner.style.display = 'flex';
+
     fetch('/mostrar_produtos')
         .then(response => response.json())
         .then(data => {
@@ -62,7 +67,11 @@ function mostrarProdutos() {
             // Chama calcularTotal uma vez após a lista de produtos ser carregada
             calcularTotal();
         })
-        .catch(error => console.error('Erro ao carregar a lista de produtos', error));
+        .catch(error => console.error('Erro ao carregar a lista de produtos', error))
+        .finally(() => {
+            // Esconde o spinner após o carregamento ou erro
+            loadingSpinner.style.display = 'none';
+        });
 }
 
 // Função para exibir lista pessoal

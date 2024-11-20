@@ -12,15 +12,24 @@ import threading
 import telebot
 
 
+#-------- Chaves e Tokens a serem salvos no ambiente virtual
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
-app.secret_key = os.getenv('SECRET_KEY')
-app.config['usuario'] = os.getenv('DATABASE_USUARIO')
-app.config['senha'] = os.getenv('DATABASE_SENHA')
-TOKEN = os.getenv('TELEGRAM_TOKEN')
+app.secret_key = '159357' #os.getenv('SECRET_KEY')
+app.config['usuario'] = 'admin' #os.getenv('DATABASE_USUARIO')
+app.config['senha'] = 'brasil123' #os.getenv('DATABASE_SENHA')
+TOKEN = '8179834898:AAEhaVc6DbTRI-u5Oz92z1oclApc2IYeoYE' #os.getenv('TELEGRAM_TOKEN')
+
+db = PostgresqlDatabase(
+    'railway',  # Nome do banco
+    user='postgres',  # Usuário
+    password='QheHqOROphPvgXbZknXJLdEkNXKRckSD',  # Senha
+    host='junction.proxy.rlwy.net',  # Host do banco
+    port=45024  # Porta do banco
+)
 
 #------------TELEGRAM CONFIGS --------------------------------------
 # Configuração do Telegram Bot
@@ -80,13 +89,13 @@ login_manager.init_app(app)
 login_manager.login_view = 'pagina_login'
 
 #-------------CLASSES BANCO DE DADOS ------------------------------
-db = SqliteDatabase('dados.db')
+
 class Pessoal(Model):
-    id = IntegerField(primary_key=True, unique=True)
+    id = AutoField(primary_key=True)
     posto = CharField()
     nome = CharField(unique=True)
-    telefone = IntegerField(null=True)
-    chat_id = IntegerField(null=True)
+    telefone = BigIntegerField(null=True)
+    chat_id = BigIntegerField(null=True)
 
     class Meta:
         database = db
@@ -94,7 +103,7 @@ class Pessoal(Model):
 
 # Modelo da tabela "estoque"
 class Estoque(Model):
-    id = IntegerField(primary_key=True, unique=True)
+    id = AutoField(primary_key=True)
     produto = CharField(unique=True)
     tamanho = IntegerField(null=True)
     categoria = CharField()
@@ -110,7 +119,7 @@ class Estoque(Model):
 
 
 class Venda(Model):
-    id = IntegerField(primary_key=True, unique=True)
+    id = AutoField(primary_key=True)
     nome = ForeignKeyField(Pessoal, field='nome', on_update='CASCADE', on_delete='CASCADE')
     produto = ForeignKeyField(Estoque, field='produto', on_update='CASCADE', on_delete='CASCADE')
     quantidade = IntegerField()
@@ -123,7 +132,7 @@ class Venda(Model):
         db_table = 'venda'
 
 class Compra(Model):
-    id = IntegerField(primary_key=True, unique=True)
+    id = AutoField(primary_key=True)
     produto = ForeignKeyField(Estoque, field='produto', on_update='CASCADE', on_delete='CASCADE')
     preco_compra = FloatField()
     quantidade = IntegerField()
@@ -139,8 +148,15 @@ class User(UserMixin):
         self.id = id
 
 
-db.connect()
-db.create_tables([Pessoal, Estoque, Venda, Compra])
+# Conexão e criação de tabelas
+try:
+    db.connect(reuse_if_open=True)
+    db.create_tables([Pessoal, Estoque, Venda, Compra])
+    print("Conectado ao banco e tabelas criadas!")
+except Exception as e:
+    print(f"Erro ao conectar ao banco: {e}")
+finally:
+    db.close()
 #--------------------- FIM CLASSES BANCO DE DADOS --------------------
 
 
@@ -193,19 +209,34 @@ def logout():
 # ---------------------FUNÇÕES MANIPULAÇÃO DE BANCO DE DADOS -----------------------
 @app.route('/cadastrar_pessoal', methods=['POST'])
 def cadastrar_pessoal():
-    data = request.json
-    posto = data.get('posto')
-    nome = data.get('nome')
-    telefone = data.get('telefone')
-    chat_id = data.get('chat_id')
-
     try:
+        data = request.json  # Captura os dados enviados
+        print("Dados recebidos:", data)
 
+        # Validação básica para evitar campos ausentes
+        if not data:
+            return jsonify({"status": "error", "message": "Nenhum dado recebido"}), 400
+
+        posto = data.get('posto')
+        nome = data.get('nome')
+        telefone = data.get('telefone')
+        chat_id = data.get('chat_id')
+
+        print(f"Dados processados: posto={posto}, nome={nome}, telefone={telefone}, chat_id={chat_id}")
+
+        # Criação do registro no banco
         Pessoal.create(posto=posto, nome=nome, telefone=telefone, chat_id=chat_id)
-        return jsonify({"status": "success"}), 200
+
+        return jsonify({"status": "success", "message": "Militar cadastrado com sucesso!"}), 201
 
     except IntegrityError as e:
-        return jsonify({"status": "error", "message": "Erro ao cadastrar pessoa. Parece já estar no Banco de Dados"}), 400
+        print("Erro de integridade:", e)
+        return jsonify({"status": "error", "message": "Militar já cadastrado no banco de dados"}), 400
+
+    except Exception as e:
+        print("Erro inesperado:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
+
 
 
 @app.route('/mostrar_pessoal')
@@ -403,37 +434,80 @@ def remover_compra(id):
 @app.route('/cadastrar_venda', methods=['POST'])
 def cadastrar_venda():
     data = request.json
+    print("Dados recebidos:", data)
+
     nome = data.get('nome')
     produtosSelecionados = data.get('produtosSelecionados')
-    pessoal = Pessoal.select()
-    pessoa = Pessoal.get(Pessoal.nome == nome)
+
+    # Validações iniciais
+    if not nome:
+        return jsonify({'status': 'error', 'message': 'Nome do cliente é obrigatório'}), 400
+
+    if not produtosSelecionados or not isinstance(produtosSelecionados, list):
+        return jsonify({'status': 'error', 'message': 'Lista de produtos inválida ou vazia'}), 400
+
+    pessoa = Pessoal.get_or_none(Pessoal.nome == nome)
+
+    if not pessoa:
+        return jsonify({'status': 'error', 'message': 'Pessoa não encontrada'}), 404
 
     try:
-
         for venda in produtosSelecionados:
-            produto = venda.get('produto')
+            # Valida cada produto
+            if not isinstance(venda, dict):
+                return jsonify({'status': 'error', 'message': 'Formato de produto inválido'}), 400
+
+            produto_nome = venda.get('produto')
             quantidade = venda.get('quantidade')
-            preco_venda = venda.get('preco')
             preco_total = venda.get('preco_total')
 
-            Venda.create(nome=nome, produto=produto, quantidade=quantidade, preco_venda=preco_venda, valor_total=preco_total)
-            produto = Estoque.get(Estoque.produto == produto)
-            produto.quantidade -= int(quantidade)
+            if not produto_nome or not quantidade or not preco_total:
+                return jsonify({'status': 'error', 'message': f'Dados incompletos para o produto: {venda}'}), 400
+
+            quantidade = int(quantidade)
+            preco_total = float(preco_total)
+
+            # Busca o produto no estoque
+            produto = Estoque.get_or_none(Estoque.produto == produto_nome)
+            if not produto:
+                return jsonify({'status': 'error', 'message': f'Produto "{produto_nome}" não encontrado'}), 404
+
+            # Cria a venda
+            Venda.create(
+                nome=pessoa,
+                produto=produto,
+                quantidade=quantidade,
+                valor_total=preco_total
+            )
+
+
+            produto.quantidade -= quantidade
             produto.save()
 
+
+    except IntegrityError as e:
+        print("Erro de integridade:", e)
+        return jsonify({"status": "error", "message": "Erro na venda"}), 400
     except Exception as e:
-        return jsonify({'status': 'error', 'message': f'Erro ao salvar no banco de dados: {str(e)}'}), 500
+        print("Erro inesperado ao salvar a venda:", e)
+        return jsonify({'status': 'error', 'message': f'Erro interno ao processar a venda: {str(e)}'}), 500
 
-        # Envia mensagem no Telegram se a pessoa for encontrada
-    if pessoa and pessoa.chat_id:
+    # Envia mensagem no Telegram se o chat_id estiver registrado
+    if pessoa.chat_id:
         try:
-            # Envia uma mensagem para o chat_id da pessoa com os detalhes da venda
-            bot.send_message(pessoa.chat_id,
-                                f"Olá {nome}, \nCompra realizada com sucesso! \nProdutos: {', '.join([venda['produto'] for venda in produtosSelecionados])}.\nTotal: R$ {sum([venda['preco_total'] for venda in produtosSelecionados])}. \n\nSe não foi você quem realizou essa compra, contate a administração do Grêmio!")
+            produtos = ', '.join([str(venda.get('produto', 'Desconhecido')) for venda in produtosSelecionados])
+            total = sum(float(venda.get('preco_total', 0)) for venda in produtosSelecionados)
+            bot.send_message(
+                pessoa.chat_id,
+                f"Olá {nome}, \nCompra realizada com sucesso! \nProdutos: {produtos}.\nTotal: R$ {total:.2f}. \n\nSe não foi você quem realizou essa compra, contate a administração do Grêmio!"
+            )
         except Exception as e:
-            return jsonify({'status': 'error', 'message': f'Erro ao enviar mensagem no Telegram: {str(e)}'}), 500
+            print(f"Erro ao enviar mensagem no Telegram: {e}")
 
+    print("Venda cadastrada com sucesso.")
     return jsonify({'status': 'success', 'message': 'Venda cadastrada com sucesso!'})
+
+
 
 @app.route('/mostrar_vendas')
 def mostrar_vendas():

@@ -80,6 +80,10 @@ document.getElementById('cadastrarPessoal').addEventListener('submit', function(
 
 //Função Mostrar Pessoal
 function mostrarPessoal() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    // Exibe o spinner antes de iniciar o fetch
+    loadingSpinner.style.display = 'flex';
+
     fetch('/mostrar_pessoal')
         .then(response => response.json())
         .then(data => {
@@ -103,7 +107,11 @@ function mostrarPessoal() {
                 tabelaPessoal.appendChild(novaLinha);
             });
         })
-        .catch(error => console.error('Erro ao carregas a lista de pessoal', error));
+        .catch(error => console.error('Erro ao carregar a lista de pessoal', error))
+        .finally(() => {
+            // Esconde o spinner após o carregamento ou erro
+            loadingSpinner.style.display = 'none';
+        });
 }
 
 //Função Remover pessoal
@@ -170,6 +178,9 @@ document.getElementById('cadastrarProduto').addEventListener('submit', function(
 
 //Função Mostrar Produtos
 function mostrarProdutos() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    // Exibe o spinner antes de iniciar o fetch
+    loadingSpinner.style.display = 'flex';
     fetch('/mostrar_produtos')
         .then(response => response.json())
         .then(data => {
@@ -200,7 +211,11 @@ function mostrarProdutos() {
                 tabelaEstoque.appendChild(novaLinha);
             });
         })
-        .catch(error => console.error('Erro ao carregar a lista de produtos', error));
+        .catch(error => console.error('Erro ao carregar a lista de produtos', error))
+        .finally(() => {
+            // Esconde o spinner após o carregamento ou erro
+            loadingSpinner.style.display = 'none';
+        });
 }
 
 //Função Remover Produto
@@ -283,6 +298,10 @@ function alterarProduto(id) {
 //--------------------------------------------INÍCIO FUNÇÕES COMPRAS ----------------------------------------
 // Função para mostrar a lista de produtos na área de compras
 function mostrarListaCompras() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    // Exibe o spinner antes de iniciar o fetch
+    loadingSpinner.style.display = 'flex';
+
     fetch('/mostrar_produtos')
         .then(response => response.json())
         .then(data => {
@@ -303,7 +322,11 @@ function mostrarListaCompras() {
                 listaCompras.appendChild(novaLinha);
             });
         })
-        .catch(error => console.error('Erro ao carregar a lista de produtos no select:', error));
+        .catch(error => console.error('Erro ao carregar a lista de produtos no select:', error))
+        .finally(() => {
+            // Esconde o spinner após o carregamento ou erro
+            loadingSpinner.style.display = 'none';
+        });
 };
 
 document.getElementById('botaoFiltrar').addEventListener('click', function() {
@@ -396,6 +419,10 @@ document.getElementById('cadastrarCompras').addEventListener('submit', function(
 
 //Função Mostrar Compras
 function mostrarCompras() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    // Exibe o spinner antes de iniciar o fetch
+    loadingSpinner.style.display = 'flex';
+
     fetch('/mostrar_compras')
         .then(response => response.json())
         .then(data => {
@@ -419,7 +446,11 @@ function mostrarCompras() {
                 tabelaCompras.appendChild(novaLinha);
             });
         })
-        .catch(error => console.error('Erro ao carregar a lista de compras', error));
+        .catch(error => console.error('Erro ao carregar a lista de compras', error))
+        .finally(() => {
+            // Esconde o spinner após o carregamento ou erro
+            loadingSpinner.style.display = 'none';
+        });
 }
 
 //Função Remover Compras
@@ -444,8 +475,12 @@ function removerCompras(id){
 
 //--------------------------------------------FIM FUNÇÕES COMPRAS ----------------------------------------
 // -------------------------------------------INÍCIO FUNÇÕES VENDAS -------------------------------------
-//Função Mostrar Compras
+//Função Mostrar Vendas
 function mostrarVendas() {
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    // Exibe o spinner antes de iniciar o fetch
+    loadingSpinner.style.display = 'flex';
+
     fetch('/mostrar_vendas')
         .then(response => response.json())
         .then(data => {
@@ -471,7 +506,11 @@ function mostrarVendas() {
                 tabelaVendas.appendChild(novaLinha);
             });
         })
-        .catch(error => console.error('Erro ao carregar a lista de vendas', error));
+        .catch(error => console.error('Erro ao carregar a lista de vendas', error))
+        .finally(() => {
+            // Esconde o spinner após o carregamento ou erro
+            loadingSpinner.style.display = 'none';
+        });
 }
 
 document.getElementById('botaoFiltrar2').addEventListener('click', function() {
@@ -603,3 +642,4 @@ document.getElementById('logout').addEventListener('click', function(event) {
         mensagemDiv.innerHTML = 'Erro de rede ou servidor!';
     });
 });
+
