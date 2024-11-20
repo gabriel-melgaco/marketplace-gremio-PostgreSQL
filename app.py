@@ -25,10 +25,10 @@ TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 db = PostgresqlDatabase(
     'railway',  # Nome do banco
-    user='postgres',  # Usuário
-    password='QheHqOROphPvgXbZknXJLdEkNXKRckSD',  # Senha
-    host='junction.proxy.rlwy.net',  # Host do banco
-    port=45024  # Porta do banco
+    user= os.getenv('POSTGRES_USUARIO'),
+    password= os.getenv('POSTGRES_SENHA'),
+    host= os.getenv('POSTGRES_HOST'),
+    port= os.getenv('POSTGRES_PORTA')
 )
 
 #------------TELEGRAM CONFIGS --------------------------------------
