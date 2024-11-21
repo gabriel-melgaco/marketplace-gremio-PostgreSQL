@@ -219,8 +219,8 @@ def cadastrar_pessoal():
 
         posto = data.get('posto')
         nome = data.get('nome')
-        telefone = data.get('telefone')
-        chat_id = data.get('chat_id')
+        telefone = data.get('telefone') or None
+        chat_id = data.get('chat_id') or None
 
         print(f"Dados processados: posto={posto}, nome={nome}, telefone={telefone}, chat_id={chat_id}")
 
