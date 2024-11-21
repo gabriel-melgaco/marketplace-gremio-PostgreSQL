@@ -10,6 +10,7 @@ import re
 from openpyxl import Workbook
 import threading
 import telebot
+import base64 #carregamento de imagens
 
 
 #-------- Chaves e Tokens a serem salvos no ambiente virtual
@@ -111,7 +112,7 @@ class Estoque(Model):
     quantidade = IntegerField(null=True)
     preco_venda = FloatField()
     preco_compra = FloatField(null=True)
-    foto = CharField(null=True)
+    foto = BlobField(null=True)
 
     class Meta:
         database = db
@@ -288,8 +289,14 @@ def cadastrar_produto():
     categoria = request.form.get('categoria')
     preco_venda = float(request.form.get('preco_venda'))
     preco_compra = 0
-    foto = f'static/img/{tratar_string(produto)}.png' # o que vai ser salvo no banco de dados
-    foto_salva = request.files.get('foto') # a que vai ser salva na pasta /static/img
+
+    # Recebe o arquivo de foto da requisição
+    foto_salva = request.files.get('foto')
+    if not foto_salva:
+        return jsonify({'status': 'error', 'message': 'Nenhuma foto foi enviada'}), 400
+
+    # Lê os dados binários da foto
+    dados_foto = foto_salva.read()
 
     # Validações básicas
     if not all([produto, tamanho, unidade, categoria, preco_venda, foto_salva]):
@@ -297,7 +304,7 @@ def cadastrar_produto():
 
     # Salva no banco de dados
     try:
-        Estoque.create(produto=produto, tamanho=tamanho, unidade=unidade, categoria=categoria, preco_venda=preco_venda, foto=foto, quantidade=quantidade, preco_compra=preco_compra)
+        Estoque.create(produto=produto, tamanho=tamanho, unidade=unidade, categoria=categoria, preco_venda=preco_venda, foto=dados_foto, quantidade=quantidade, preco_compra=preco_compra)
     except IntegrityError as e:
         return jsonify({'status': 'error', 'message': f'Parece que este produto já está cadastrado com esse nome: {str(e)}'}), 400
     except Exception as e:
@@ -319,9 +326,10 @@ def mostrar_produtos():
     lista_estoque =[]
 
     for produto in estoque:
+        foto_base64 = base64.b64encode(produto.foto).decode('utf-8') if produto.foto else None
         lista_estoque.append({
             'id': produto.id,
-            'foto': produto.foto,
+            'foto': f"data:image/png;base64,{foto_base64}" if foto_base64 else None,
             'produto': produto.produto,
             'tamanho': produto.tamanho,
             'unidade': produto.unidade,

@@ -176,48 +176,49 @@ document.getElementById('cadastrarProduto').addEventListener('submit', function(
     });
 });
 
-//Função Mostrar Produtos
+// Função Mostrar Produtos
 function mostrarProdutos() {
     const loadingSpinner = document.getElementById('loadingSpinner');
     // Exibe o spinner antes de iniciar o fetch
     loadingSpinner.style.display = 'flex';
-    fetch('/mostrar_produtos')
-        .then(response => response.json())
-        .then(data => {
-            const tabelaEstoque = document.getElementById('tabelaEstoque').getElementsByTagName('tbody')[0];
-            tabelaEstoque.innerHTML = '';
+fetch('/mostrar_produtos')
+    .then(response => response.json())
+    .then(data => {
+        const tabelaEstoque = document.getElementById('tabelaEstoque').getElementsByTagName('tbody')[0];
+        tabelaEstoque.innerHTML = '';
 
-            data.forEach(produto => {
-                const novaLinha = document.createElement('tr');
-                novaLinha.innerHTML = `
-                    <td>${produto.id}</td>
-                    <td><img src="${produto.foto}" class="img-fluid rounded-3" style="width: 65px;"></td>
-                    <td>${produto.produto}</td>
-                    <td>${produto.tamanho}</td>
-                    <td>${produto.unidade}</td>
-                    <td>${produto.quantidade}</td>
-                    <td>${produto.categoria}</td>
-                    <td>R$ ${parseFloat(produto.preco_venda).toFixed(2)}</td>
-                    <td>R$ ${parseFloat(produto.preco_compra).toFixed(2)}</td>
-                    <td class="align-middle">
-                        <a href="#!" data-mdb-tooltip-init title="Remove" onclick="removerProduto(${produto.id})">
-                            <i class="fas fa-trash-alt fa-lg text-warning"></i>
-                        </a>
-                        <a href="#!" data-mdb-tooltip-init title="Alterar" onclick="alterarProduto(${produto.id})">
-                            <i class="fa-solid fa-file-pen"></i></i>
-                        </a>
-                    </td>
-                `;
-                tabelaEstoque.appendChild(novaLinha);
-            });
-        })
-        .catch(error => console.error('Erro ao carregar a lista de produtos', error))
-        .finally(() => {
-            // Esconde o spinner após o carregamento ou erro
-            loadingSpinner.style.display = 'none';
+        data.forEach(produto => {
+            const novaLinha = document.createElement('tr');
+            novaLinha.innerHTML = `
+                <td>${produto.id}</td>
+                <td>
+                    <img src="${produto.foto}" class="img-fluid rounded-3" style="width: 65px;" alt="Imagem do Produto">
+                </td>
+                <td>${produto.produto}</td>
+                <td>${produto.tamanho}</td>
+                <td>${produto.unidade}</td>
+                <td>${produto.quantidade}</td>
+                <td>${produto.categoria}</td>
+                <td>R$ ${parseFloat(produto.preco_venda).toFixed(2)}</td>
+                <td>R$ ${parseFloat(produto.preco_compra).toFixed(2)}</td>
+                <td class="align-middle">
+                    <a href="#!" data-mdb-tooltip-init title="Remove" onclick="removerProduto(${produto.id})">
+                        <i class="fas fa-trash-alt fa-lg text-warning"></i>
+                    </a>
+                    <a href="#!" data-mdb-tooltip-init title="Alterar" onclick="alterarProduto(${produto.id})">
+                        <i class="fa-solid fa-file-pen"></i></i>
+                    </a>
+                </td>
+            `;
+            tabelaEstoque.appendChild(novaLinha);
         });
+    })
+    .catch(error => console.error('Erro ao carregar a lista de produtos', error))
+    .finally(() => {
+        // Esconde o spinner após o carregamento ou erro
+        loadingSpinner.style.display = 'none';
+    });
 }
-
 //Função Remover Produto
 function removerProduto(id){
     const confirmacao = confirm("Tem certeza que deseja excluir esse Produto? Esta ação pode afetar a emissão correta de relatórios futuros");
