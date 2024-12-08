@@ -567,7 +567,7 @@ def cadastrar_venda():
 
 @app.route('/mostrar_vendas')
 def mostrar_vendas():
-    vendas = Venda.select()
+    vendas = Venda.select().order_by(Venda.id.desc())
     lista_venda =[]
 
     for venda in vendas:
