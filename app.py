@@ -25,7 +25,7 @@ app.config['senha'] = os.getenv('DATABASE_SENHA')
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 db = PostgresqlDatabase(
-    'railway',  # Nome do banco
+    'railway',  #'railway'
     user= os.getenv('POSTGRES_USUARIO'),
     password= os.getenv('POSTGRES_SENHA'),
     host= os.getenv('POSTGRES_HOST'),
@@ -121,7 +121,8 @@ class Estoque(Model):
 
 class Venda(Model):
     id = AutoField(primary_key=True)
-    nome = ForeignKeyField(Pessoal, field='nome', on_update='CASCADE', on_delete='CASCADE')
+    nome = ForeignKeyField(Pessoal, field='nome', on_update='CASCADE', on_delete='CASCADE', null=True)
+    visitante = CharField(null=True)
     produto = ForeignKeyField(Estoque, field='produto', on_update='CASCADE', on_delete='CASCADE')
     quantidade = IntegerField()
     valor_total = FloatField()
@@ -183,6 +184,10 @@ def protected():
 @app.route("/sucesso")
 def sucesso():
     return render_template('sucesso.html')
+
+@app.route("/sucesso_visitante")
+def sucesso_visitante():
+    return render_template('sucesso_visitante.html')
 
 @app.route("/error")
 def error():
@@ -456,65 +461,108 @@ def cadastrar_venda():
 
     pessoa = Pessoal.get_or_none(Pessoal.nome == nome)
 
-    if not pessoa:
-        return jsonify({'status': 'error', 'message': 'Pessoa não encontrada'}), 404
+    if pessoa:
 
-    try:
-        for venda in produtosSelecionados:
-            # Valida cada produto
-            if not isinstance(venda, dict):
-                return jsonify({'status': 'error', 'message': 'Formato de produto inválido'}), 400
-
-            produto_nome = venda.get('produto')
-            quantidade = venda.get('quantidade')
-            preco_total = venda.get('preco_total')
-
-            if not produto_nome or not quantidade or not preco_total:
-                return jsonify({'status': 'error', 'message': f'Dados incompletos para o produto: {venda}'}), 400
-
-            quantidade = int(quantidade)
-            preco_total = float(preco_total)
-
-            # Busca o produto no estoque
-            produto = Estoque.get_or_none(Estoque.produto == produto_nome)
-            if not produto:
-                return jsonify({'status': 'error', 'message': f'Produto "{produto_nome}" não encontrado'}), 404
-
-            # Cria a venda
-            Venda.create(
-                nome=pessoa,
-                produto=produto,
-                quantidade=quantidade,
-                valor_total=preco_total
-            )
-
-
-            produto.quantidade -= quantidade
-            produto.save()
-
-
-    except IntegrityError as e:
-        print("Erro de integridade:", e)
-        return jsonify({"status": "error", "message": "Erro na venda"}), 400
-    except Exception as e:
-        print("Erro inesperado ao salvar a venda:", e)
-        return jsonify({'status': 'error', 'message': f'Erro interno ao processar a venda: {str(e)}'}), 500
-
-    # Envia mensagem no Telegram se o chat_id estiver registrado
-    if pessoa.chat_id:
         try:
-            produtos = ', '.join([str(venda.get('produto', 'Desconhecido')) for venda in produtosSelecionados])
-            total = sum(float(venda.get('preco_total', 0)) for venda in produtosSelecionados)
-            bot.send_message(
-                pessoa.chat_id,
-                f"Olá {nome}, \nCompra realizada com sucesso! \nProdutos: {produtos}.\nTotal: R$ {total:.2f}. \n\nSe não foi você quem realizou essa compra, contate a administração do Grêmio!"
-            )
+            for venda in produtosSelecionados:
+                # Valida cada produto
+                if not isinstance(venda, dict):
+                    return jsonify({'status': 'error', 'message': 'Formato de produto inválido'}), 400
+
+                produto_nome = venda.get('produto')
+                quantidade = venda.get('quantidade')
+                preco_total = venda.get('preco_total')
+
+                if not produto_nome or not quantidade or not preco_total:
+                    return jsonify({'status': 'error', 'message': f'Dados incompletos para o produto: {venda}'}), 400
+
+                quantidade = int(quantidade)
+                preco_total = float(preco_total)
+
+                # Busca o produto no estoque
+                produto = Estoque.get_or_none(Estoque.produto == produto_nome)
+                if not produto:
+                    return jsonify({'status': 'error', 'message': f'Produto "{produto_nome}" não encontrado'}), 404
+
+                # Cria a venda
+                Venda.create(
+                    nome=pessoa,
+                    produto=produto,
+                    quantidade=quantidade,
+                    valor_total=preco_total
+                )
+
+
+                produto.quantidade -= quantidade
+                produto.save()
+
+
+        except IntegrityError as e:
+            print("Erro de integridade:", e)
+            return jsonify({"status": "error", "message": "Erro na venda"}), 400
         except Exception as e:
-            print(f"Erro ao enviar mensagem no Telegram: {e}")
+            print("Erro inesperado ao salvar a venda:", e)
+            return jsonify({'status': 'error', 'message': f'Erro interno ao processar a venda: {str(e)}'}), 500
 
-    print("Venda cadastrada com sucesso.")
-    return jsonify({'status': 'success', 'message': 'Venda cadastrada com sucesso!'})
+        # Envia mensagem no Telegram se o chat_id estiver registrado
+        if pessoa.chat_id:
+            try:
+                produtos = ', '.join([str(venda.get('produto', 'Desconhecido')) for venda in produtosSelecionados])
+                total = sum(float(venda.get('preco_total', 0)) for venda in produtosSelecionados)
+                bot.send_message(
+                    pessoa.chat_id,
+                    f"Olá {nome}, \nCompra realizada com sucesso! \nProdutos: {produtos}.\nTotal: R$ {total:.2f}. \n\nSe não foi você quem realizou essa compra, contate a administração do Grêmio!"
+                )
+            except Exception as e:
+                print(f"Erro ao enviar mensagem no Telegram: {e}")
 
+        print("Venda cadastrada com sucesso.")
+        return jsonify({'status': 'success', 'message': 'Venda cadastrada com sucesso!'})
+
+    else:
+        try:
+            for venda in produtosSelecionados:
+                # Valida cada produto
+                if not isinstance(venda, dict):
+                    return jsonify({'status': 'error', 'message': 'Formato de produto inválido'}), 400
+
+                produto_nome = venda.get('produto')
+                quantidade = venda.get('quantidade')
+                preco_total = venda.get('preco_total')
+
+                if not produto_nome or not quantidade or not preco_total:
+                    return jsonify({'status': 'error', 'message': f'Dados incompletos para o produto: {venda}'}), 400
+
+                quantidade = int(quantidade)
+                preco_total = float(preco_total)
+
+                # Busca o produto no estoque
+                produto = Estoque.get_or_none(Estoque.produto == produto_nome)
+                if not produto:
+                    return jsonify({'status': 'error', 'message': f'Produto "{produto_nome}" não encontrado'}), 404
+
+                # Cria a venda
+                Venda.create(
+                    visitante=nome,
+                    produto=produto,
+                    quantidade=quantidade,
+                    valor_total=preco_total
+                )
+
+
+                produto.quantidade -= quantidade
+                produto.save()
+
+
+        except IntegrityError as e:
+            print("Erro de integridade:", e)
+            return jsonify({"status": "error", "message": "Erro na venda"}), 400
+        except Exception as e:
+            print("Erro inesperado ao salvar a venda:", e)
+            return jsonify({'status': 'error', 'message': f'Erro interno ao processar a venda: {str(e)}'}), 500
+
+        print('Venda para visitante cadastrada com sucesso!')
+        return jsonify({'status': 'success_visitante', 'message': 'Venda para visitante cadastrada com sucesso!'}), 200
 
 
 @app.route('/mostrar_vendas')
@@ -525,7 +573,8 @@ def mostrar_vendas():
     for venda in vendas:
         lista_venda.append({
             'id': venda.id,
-            'nome': venda.nome.nome,
+            'nome': venda.nome.nome if venda.nome else "Visitante",
+            'visitante': venda.visitante if venda.visitante else "-",
             'produto': venda.produto.produto,
             'quantidade': venda.quantidade,
             'valor_total': venda.valor_total,
@@ -571,7 +620,7 @@ def download_relatorio():
     produtos = set()
 
     for venda in relatorio:
-        nome = venda.nome.nome
+        nome = venda.nome.nome if venda.nome else f"Visitante: {venda.visitante}"
         produto_nome = venda.produto.produto
         quantidade = venda.quantidade
         valor_total = venda.valor_total

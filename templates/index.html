@@ -64,18 +64,37 @@
                     <div class="card bg-primary text-white rounded-3 shadow">
                       <div class="card-body shadow">
     
-                        <form id="finalizarVenda" class="mt-4">
+                        <form id="formConta" class="mt-4">
                           <div data-mdb-input-init class="form-outline form-white mb-4">
-                            <label class="form-label" for="typeName">Selecione a conta:</label>
-                            <div class="form-group">
-                              <select class="form-control" name="nome" id="listaPessoal" required>
-                                <!--renderiza a lista de pessoas aqui-->
-                              </select>
-                            </div>
+                              <label class="form-label" for="typeName">Selecione a conta:</label>
+                              <div class="form-group">
+                                  <select class="form-control" name="nome" id="listaPessoal" required>
+                                      <!-- Renderiza a lista de pessoas aqui -->
+                                  </select>
+                              </div>
                           </div>
+                      </form>
+                      
+                      <form id="formVisitante" class="mt-4" style="display: none;">
+                          <div data-mdb-input-init class="form-outline form-white mb-4">
+                              <label class="form-label" for="typeName">Digite seu nome e telefone, visitante:</label>
+                              <div class="form-group">
+                                  <input type="text" class="form-control" placeholder="Nome" id="nomeVisitante" required>
+                              </div>
+                                  <input type="number" class="form-control" placeholder="Telefone" id="telefoneVisitante" required>
+                          </div>
+                      </form>
+                      
+                      <div class="mt-4">
+                          <input class="form-check-input" type="checkbox" value="" id="CheckboxVisitante">
+                          <label class="form-check-label" for="CheckboxVisitante">
+                              <strong>Sou Visitante</strong>
+                          </label>
+                      </div>
+                      
                 
                           <div class="d-flex justify-content-between mb-4">
-                            <p class="mb-2">Total</p>
+                            <p class="mb-1">Total</p>
                             <strong><p class="mb-2 total">R$0,00</p></strong>
                           </div>
       

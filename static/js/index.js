@@ -136,10 +136,20 @@ function calcularTotal() {
 document.getElementById('submit').addEventListener('click', function(event) {
     event.preventDefault();
 
-    const nome = document.getElementById('listaPessoal').value.trim(); // Remove espaços em branco
+    const nomeCadastrado = document.getElementById('listaPessoal').value.trim();
+    const nomeVisitante = document.getElementById('nomeVisitante').value.trim();
+    const telefoneVisitante = document.getElementById('telefoneVisitante').value.trim();
+    let nome = null;
     const resultado = calcularTotal();
     const total = resultado.total;
     const produtosSelecionados = resultado.produtosSelecionados;
+
+    //Verifica qual dos campos está preenchido
+    if (!nomeCadastrado){
+        nome = nomeVisitante + telefoneVisitante;
+    } else{
+        nome = nomeCadastrado;
+    }
 
     // Verifica se o nome está vazio
     if (!nome) {
@@ -201,6 +211,10 @@ document.getElementById('submit').addEventListener('click', function(event) {
                 console.log('Venda criada com sucesso!');
                 modal.hide();
                 window.location.href = "sucesso";
+            } else if (data.status === 'success_visitante') {
+                console.log('Venda criada com sucesso para visitante!');
+                modal.hide();
+                window.location.href = `sucesso_visitante?total=${total.toFixed(2)}`;
             } else {
                 console.error('Erro ao criar a venda:', data.message);
                 window.location.href = "error";
@@ -218,6 +232,28 @@ function rolarParaCategoria(categoria) {
         elemento.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 }
+
+//Função para ocultar a seleção de conta e mostrar campo para preencher visitante
+document.addEventListener('DOMContentLoaded', function () {
+    const checkbox = document.getElementById('CheckboxVisitante');
+    const formConta = document.getElementById('formConta');
+    const formVisitante = document.getElementById('formVisitante');
+
+    checkbox.addEventListener('click', function () {
+        if (checkbox.checked) {
+            formConta.reset();
+            formVisitante.reset();
+            formConta.style.display = 'none';
+            formVisitante.style.display = 'block';
+        } else {
+            formConta.reset();
+            formVisitante.reset();
+            formConta.style.display = 'block';
+            formVisitante.style.display = 'none';
+        }
+    });
+});
+
 
 
 

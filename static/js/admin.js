@@ -493,6 +493,7 @@ function mostrarVendas() {
                 novaLinha.innerHTML = `
                     <td>${vendas.id}</td>
                     <td>${vendas.nome}</td>
+                    <td>${vendas.visitante}</td>
                     <td>${vendas.produto}</td>
                     <td>${vendas.quantidade}</td>
                     <td>R$ ${parseFloat(vendas.valor_total).toFixed(2)}</td>
