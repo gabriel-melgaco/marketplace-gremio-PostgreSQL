@@ -19,17 +19,17 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
-app.secret_key = '159357' #os.getenv('SECRET_KEY')
-app.config['usuario'] = 'admin'#os.getenv('DATABASE_USUARIO')
-app.config['senha'] = '159357' #os.getenv('DATABASE_SENHA')
-TOKEN = '8179834898:AAEhaVc6DbTRI-u5Oz92z1oclApc2IYeoYE' #os.getenv('TELEGRAM_TOKEN')
+app.secret_key = os.getenv('SECRET_KEY')
+app.config['usuario'] = os.getenv('DATABASE_USUARIO')
+app.config['senha'] = os.getenv('DATABASE_SENHA')
+TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 db = PostgresqlDatabase(
-    'postgres',  #'railway'
-    user= 'postgres',#os.getenv('POSTGRES_USUARIO'),
-    password= '33222003',#os.getenv('POSTGRES_SENHA'),
-    host= 'localhost',#.getenv('POSTGRES_HOST'),
-    port= '5432',#os.getenv('POSTGRES_PORTA')
+    'railway',
+    user= os.getenv('POSTGRES_USUARIO'),
+    password= os.getenv('POSTGRES_SENHA'),
+    host= os.getenv('POSTGRES_HOST'),
+    port= os.getenv('POSTGRES_PORTA')
 )
 
 #------------TELEGRAM CONFIGS --------------------------------------
