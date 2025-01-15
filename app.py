@@ -29,7 +29,7 @@ db = PostgresqlDatabase(
     user= os.getenv('POSTGRES_USUARIO'),
     password= os.getenv('POSTGRES_SENHA'),
     host= os.getenv('POSTGRES_HOST'),
-    port= os.getenv('POSTGRES_PORTA')
+    port= os.getenv('POSTGRES_PORTA')#
 )
 
 #------------TELEGRAM CONFIGS --------------------------------------
