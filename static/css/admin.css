@@ -60,3 +60,7 @@ body {
     align-items: center;
     justify-content: center;
 }
+
+.btnCadeado {
+  margin-top: 10px;
+}

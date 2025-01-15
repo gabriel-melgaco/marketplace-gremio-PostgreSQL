@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     mostrarListaCompras();
     mostrarCompras();
     mostrarVendas();
+    mostrarSenha();
 });
 
 function formatarData(dataString) {
@@ -615,9 +616,58 @@ document.getElementById('downloadRelatorio').addEventListener('submit', function
     .catch(error => console.error('Erro ao enviar dados:', error));
 });
 
+// Função para mostrar a senha do armário
+function mostrarSenha() {
+    fetch('/mostrar_senha')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Erro ao buscar senha do servidor');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const senhaArmario = document.getElementById('senhaArmario');
+            senhaArmario.textContent = data.senha; // Insere diretamente o texto da senha
+        })
+        .catch(error => console.error('Erro ao carregar senha:', error));
+}
 
+// Função Cadastrar a senha do armário
+document.getElementById('cadastrarSenha').addEventListener('submit', function(event) {
+    event.preventDefault();
 
+    const senha = document.getElementById('senha').value;
 
+    fetch(`/cadastrar_senha`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            senha: senha,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        const mensagemDiv = document.getElementById('mensagemCadeado');
+        mensagemDiv.style.display = 'block'; 
+        if (data.status === 'success') {
+            mensagemDiv.className = 'alert alert-success'; 
+            mensagemDiv.innerHTML = 'Senha cadastrada com sucesso!';
+            document.getElementById('cadastrarSenha').reset();
+            mostrarSenha(); 
+        } else {
+            mensagemDiv.className = 'alert alert-danger';
+            mensagemDiv.innerHTML = data.message || 'Erro ao cadastrar senha!'; 
+        }
+    })
+    .catch(error => {
+        const mensagemDiv = document.getElementById('mensagem');
+        mensagemDiv.style.display = 'block'; 
+        mensagemDiv.className = 'alert alert-danger';
+        mensagemDiv.innerHTML = 'Erro de rede ou servidor!';
+    });
+});
 
 
 //Função Logout

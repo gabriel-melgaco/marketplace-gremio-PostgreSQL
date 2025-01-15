@@ -81,6 +81,16 @@
           font-size: 16px;
         }
       }
+
+      .senha-destaque {
+        font-size: 2rem; /* Aumenta o tamanho do texto */
+        text-decoration: underline; /* Adiciona sublinhado */
+        text-underline-offset: 4px; /* Define a distância do sublinhado */
+        letter-spacing: 5px; /* Adiciona espaçamento entre os caracteres */
+        font-weight: bold; /* Torna o texto mais evidente (opcional) */
+        text-align: center; /* Centraliza o texto */
+        color: #333; /* Cor do texto (ajuste conforme necessário) */
+      }
     </style>
   </head>
   <body>
@@ -91,6 +101,8 @@
       </div>
       <h1>Obrigado!</h1> 
       <p>Seu pedido foi registrado com sucesso.<br> Em caso de dúvidas, contate a administração do Grêmio.</p>
+      <h1>Sua senha de retirada é:</h1>
+      <p class="senha-destaque"><i class="fa-solid fa-lock fa-fw me-3"></i><strong>{{ senha }}</strong></p>
       <h5><i class="fa-solid fa-shield-halved"></i><strong> SEGURANÇA:</strong></h5> 
       <h5>Para receber a confirmação automática da sua compra, clique no botão abaixo, inicie uma conversa com o nosso bot no Telegram e selecione seu nome, é simples e fácil:</h5>
       <a type="button" class="btn btn-primary btn-lg btn-block" href="https://t.me/GrFalcao_bot?start=12345" target="_blank"><i class="fa-brands fa-telegram fa-bounce"></i> Clique aqui para cadastrar avisos no Telegram no seu celular</a>

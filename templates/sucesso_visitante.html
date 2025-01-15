@@ -96,6 +96,17 @@
             margin-bottom: 10px;
             font-size: 16px;
         }
+
+        .senha-destaque {
+        font-size: 2rem; /* Aumenta o tamanho do texto */
+        text-decoration: underline; /* Adiciona sublinhado */
+        text-underline-offset: 4px; /* Define a distância do sublinhado */
+        letter-spacing: 5px; /* Adiciona espaçamento entre os caracteres */
+        font-weight: bold; /* Torna o texto mais evidente (opcional) */
+        text-align: center; /* Centraliza o texto */
+        color: #333; /* Cor do texto (ajuste conforme necessário) */
+      }
+
     </style>
   </head>
   <body>
@@ -107,12 +118,15 @@
       <h1>Obrigado!</h1> 
       <p>Seu pedido foi registrado com sucesso.<br> Em caso de dúvidas, contate a administração do Grêmio.</p>
       <h1 id="totalCompra"></h1>
-      <h5>Chave Pix:</h5>
+      <h5><strong>Chave Pix:</strong></h5>
       <h5 id="textoParaCopiar"> matheusmachado6428@gmail.com <i class="copy-btn fa-solid fa-copy" id="botaoCopiar"></i></h5>
       <p>Banco: 380 - Pic Pay Serviços S.A</p>
       <p>Agência: 0001</p>
       <p>Conta corrente: 101624476-2</p>
       <p>Nome: Matheus de Andrade Machado</p>
+
+      <h1>Sua senha de retirada é:</h1>
+      <p class="senha-destaque"><i class="fa-solid fa-lock fa-fw me-3"></i><strong>{{ senha }}</strong></p>
     
       <script>
         //Captar valor total para pagamento

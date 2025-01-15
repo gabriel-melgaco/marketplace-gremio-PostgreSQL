@@ -41,7 +41,10 @@
             </a>
             <a href="#backup" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
               <i class="fa-solid fa-database fa-fw me-3"></i><span>Backup</span>
-          </a>
+            </a>
+            <a href="#acesso" class="list-group-item list-group-item-action py-2 ripple" data-bs-toggle="tab">
+              <i class="fa-solid fa-lock fa-fw me-3"></i><span>Cadeado</span>
+            </a>
           </div>
         </div>
       </nav>
@@ -438,6 +441,32 @@
           </a>
         </div>
       </div>
+
+
+     <!-- CONTEÚDO ACESSO (CADEADO) -->
+      <div class="tab-pane fade" id="acesso">
+        <h1>Cadeado</h1>
+        <div class="bg-white p-3 rounded shadow">
+            <!-- Exibir senha atual -->
+            <h5>Sua senha atual é:</h5>
+            <p id="senhaArmario">Carregando...</p>
+
+            <!-- Formulário de cadastro de senha -->
+            <h5>Cadastro de Senha</h5>
+
+            <!-- Div para mensagens de sucesso ou erro -->
+            <div id="mensagemCadeado" style="display: none; padding: 10px;"></div>
+
+            <form id="cadastrarSenha">
+                <div class="col">
+                    <input type="text" class="form-control" placeholder="Senha" id="senha" required>
+                </div>
+                <button type="submit" class="btn btn-primary btnCadeado">Cadastrar Senha</button>
+            </form>
+        </div>
+      </div>
+
+      
 
     </div> <!-- Fim de Tab Content -->
   </div> <!-- Fim de Container -->

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_from_directory, send_file
+from flask import Flask, render_template, request, jsonify, send_from_directory, send_file, session, url_for, redirect
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from peewee import *
 from datetime import datetime as dt
@@ -19,17 +19,17 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
-app.secret_key = os.getenv('SECRET_KEY')
-app.config['usuario'] = os.getenv('DATABASE_USUARIO')
-app.config['senha'] = os.getenv('DATABASE_SENHA')
-TOKEN = os.getenv('TELEGRAM_TOKEN')
+app.secret_key = '159357' #os.getenv('SECRET_KEY')
+app.config['usuario'] = 'admin'#os.getenv('DATABASE_USUARIO')
+app.config['senha'] = '159357' #os.getenv('DATABASE_SENHA')
+TOKEN = '8179834898:AAEhaVc6DbTRI-u5Oz92z1oclApc2IYeoYE' #os.getenv('TELEGRAM_TOKEN')
 
 db = PostgresqlDatabase(
-    'railway',  #'railway'
-    user= os.getenv('POSTGRES_USUARIO'),
-    password= os.getenv('POSTGRES_SENHA'),
-    host= os.getenv('POSTGRES_HOST'),
-    port= os.getenv('POSTGRES_PORTA')
+    'postgres',  #'railway'
+    user= 'postgres',#os.getenv('POSTGRES_USUARIO'),
+    password= '33222003',#os.getenv('POSTGRES_SENHA'),
+    host= 'localhost',#.getenv('POSTGRES_HOST'),
+    port= '5432',#os.getenv('POSTGRES_PORTA')
 )
 
 #------------TELEGRAM CONFIGS --------------------------------------
@@ -144,6 +144,14 @@ class Compra(Model):
         database = db
         db_table = 'compra'
 
+class Acesso(Model):
+    id = AutoField(primary_key=True)
+    senha =IntegerField()
+
+    class Meta:
+        database = db
+        db_table = 'acesso'
+
 
 class User(UserMixin):
     def __init__(self, id):
@@ -153,7 +161,7 @@ class User(UserMixin):
 # Conexão e criação de tabelas
 try:
     db.connect(reuse_if_open=True)
-    db.create_tables([Pessoal, Estoque, Venda, Compra])
+    db.create_tables([Pessoal, Estoque, Venda, Compra, Acesso])
     print("Conectado ao banco e tabelas criadas!")
 except Exception as e:
     print(f"Erro ao conectar ao banco: {e}")
@@ -183,11 +191,19 @@ def protected():
 
 @app.route("/sucesso")
 def sucesso():
-    return render_template('sucesso.html')
+    if not session.get('venda_confirmada'):
+        return redirect(url_for('error'))
+    session.pop('venda_confirmada', None)
+    senha = Acesso.select().order_by(Acesso.id.desc()).first()
+    return render_template('sucesso.html', senha=senha.senha)
 
 @app.route("/sucesso_visitante")
 def sucesso_visitante():
-    return render_template('sucesso_visitante.html')
+    if not session.get('venda_confirmada'):
+        return redirect(url_for('error'))
+    session.pop('venda_confirmada', None)
+    senha = Acesso.select().order_by(Acesso.id.desc()).first()
+    return render_template('sucesso_visitante.html', senha=senha.senha)
 
 @app.route("/error")
 def error():
@@ -517,6 +533,7 @@ def cadastrar_venda():
                 print(f"Erro ao enviar mensagem no Telegram: {e}")
 
         print("Venda cadastrada com sucesso.")
+        session['venda_confirmada'] = True  # Autoriza o acesso à pagina sucesso
         return jsonify({'status': 'success', 'message': 'Venda cadastrada com sucesso!'})
 
     else:
@@ -562,6 +579,7 @@ def cadastrar_venda():
             return jsonify({'status': 'error', 'message': f'Erro interno ao processar a venda: {str(e)}'}), 500
 
         print('Venda para visitante cadastrada com sucesso!')
+        session['venda_confirmada'] = True #Autoriza o acesso à pagina sucesso
         return jsonify({'status': 'success_visitante', 'message': 'Venda para visitante cadastrada com sucesso!'}), 200
 
 
@@ -682,6 +700,42 @@ def download_database():
         return {"message": "Erro ao enviar o arquivo."}, 500
 
 
+@app.route('/mostrar_senha')
+def mostrar_senha():
+    # Supondo que você deseja buscar a última senha registrada
+    senha = Acesso.select().order_by(Acesso.id.desc()).first()
+
+    if senha:
+        return jsonify({'senha': senha.senha})
+    else:
+        return jsonify({'senha': 'Nenhuma senha encontrada'}), 404
+
+
+@app.route('/cadastrar_senha', methods=['POST'])
+def cadastrar_senha():
+    try:
+        data = request.json  # Captura os dados enviados
+        print("Dados recebidos:", data)
+
+        # Validação básica para evitar campos ausentes
+        if not data:
+            return jsonify({"status": "error", "message": "Nenhum dado recebido"}), 400
+
+        senha = data.get('senha')
+
+
+        # Criação do registro no banco
+        Acesso.create(senha=senha)
+
+        return jsonify({"status": "success", "message": "Senha cadastrada com sucesso!"}), 201
+
+    except IntegrityError as e:
+        print("Erro de integridade:", e)
+        return jsonify({"status": "error", "message": "Senha já cadastrada no banco de dados"}), 400
+
+    except Exception as e:
+        print("Erro inesperado:", e)
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 
 # ---------------------FIM FUNÇÕES MANIPULAÇÃO DE BANCO DE DADOS -----------------------
