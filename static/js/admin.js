@@ -182,7 +182,7 @@ function mostrarProdutos() {
     const loadingSpinner = document.getElementById('loadingSpinner');
     // Exibe o spinner antes de iniciar o fetch
     loadingSpinner.style.display = 'flex';
-fetch('/mostrar_produtos')
+fetch('/mostrar_produtos_admin')
     .then(response => response.json())
     .then(data => {
         const tabelaEstoque = document.getElementById('tabelaEstoque').getElementsByTagName('tbody')[0];

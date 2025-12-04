@@ -11,9 +11,12 @@ from openpyxl import Workbook
 import threading
 import telebot
 import base64 #carregamento de imagens
+from dotenv import load_dotenv
+
 
 
 #-------- Chaves e Tokens a serem salvos no ambiente virtual
+load_dotenv()
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/img'
@@ -343,7 +346,34 @@ def cadastrar_produto():
 
 @app.route('/mostrar_produtos')
 def mostrar_produtos():
+    estoque = (
+                Estoque
+                .select()
+                .where(Estoque.quantidade > 0)
+                .order_by(Estoque.categoria.asc(), Estoque.produto.asc())
+            )
+
+    lista_estoque =[]
+
+    for produto in estoque:
+        foto_base64 = base64.b64encode(produto.foto).decode('utf-8') if produto.foto else None
+        lista_estoque.append({
+            'id': produto.id,
+            'foto': f"data:image/png;base64,{foto_base64}" if foto_base64 else None,
+            'produto': produto.produto,
+            'tamanho': produto.tamanho,
+            'unidade': produto.unidade,
+            'quantidade': produto.quantidade,
+            'categoria': produto.categoria,
+            'preco_venda': produto.preco_venda,
+            'preco_compra': produto.preco_compra
+        })
+    return jsonify(lista_estoque)
+
+@app.route('/mostrar_produtos_admin')
+def mostrar_produtos_admin():
     estoque = Estoque.select().order_by(Estoque.categoria.asc(), Estoque.produto.asc())
+
     lista_estoque =[]
 
     for produto in estoque:
