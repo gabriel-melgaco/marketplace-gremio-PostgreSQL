@@ -28,7 +28,7 @@ app.config['senha'] = os.getenv('DATABASE_SENHA')
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 db = PostgresqlDatabase(
-    'railway',
+    'gremiofalcao_backup',#railway
     user= os.getenv('POSTGRES_USUARIO'),
     password= os.getenv('POSTGRES_SENHA'),
     host= os.getenv('POSTGRES_HOST'),
