@@ -28,11 +28,11 @@ app.config['senha'] = os.getenv('DATABASE_SENHA')
 TOKEN = os.getenv('TELEGRAM_TOKEN')
 
 db = PostgresqlDatabase(
-    f'{os.getenv('POSTGRES_NAME')}',#railway
+    f'{os.getenv('POSTGRES_NAME')}',
     user= os.getenv('POSTGRES_USUARIO'),
     password= os.getenv('POSTGRES_SENHA'),
     host= os.getenv('POSTGRES_HOST'),
-    port= os.getenv('POSTGRES_PORTA')#
+    port= os.getenv('POSTGRES_PORTA')
 )
 
 #------------TELEGRAM CONFIGS --------------------------------------
