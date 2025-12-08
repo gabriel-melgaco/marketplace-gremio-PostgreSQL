@@ -10,15 +10,48 @@ import re
 from openpyxl import Workbook
 import threading
 import telebot
-import base64 #carregamento de imagens
+import base64
 from dotenv import load_dotenv
 
 
 
-#-------- Chaves e Tokens a serem salvos no ambiente virtual
 load_dotenv()
 
 app = Flask(__name__)
+
+
+#------------------------Headers de Segurança Rede--------------------------------
+@app.after_request
+def set_security_headers(response):
+    # HSTS - Force HTTPS por 1 ano
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    
+    # Prevenir XSS
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    
+    # Prevenir Clickjacking
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    
+    # Controlar referrer
+    response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+    
+    # Permissions Policy (substitui Feature-Policy)
+    response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    
+    # Content Security Policy
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com https://fonts.gstatic.com; "
+        "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://kit.fontawesome.com; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "img-src 'self' data: https:; "
+        "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com;"
+    )
+    
+    return response
+
+
+#-------- Chaves e Tokens a serem salvos no ambiente virtual
+
 app.config['UPLOAD_FOLDER'] = 'static/img'
 UPLOAD_FOLDER_DB = os.path.dirname(os.path.abspath(__file__))
 app.config['UPLOAD_FOLDER_DB'] = UPLOAD_FOLDER_DB
