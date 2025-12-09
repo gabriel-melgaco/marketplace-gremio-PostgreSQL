@@ -51,48 +51,49 @@ Edite o arquivo `docker-compose.yml` e substitua os seguintes valores:
 
 ```
 services:
-sgs_db:
-image: postgres:17
-container_name: sgs_db
-restart: unless-stopped
-ports:
-- "5432:5432"
-environment:
-POSTGRES_USER: postgres
-POSTGRES_PASSWORD: "YOURPASSWORDHERE"
-POSTGRES_DB: YOURDBNAMEHERE
+  sgs_db:
+    image: postgres:17
+    container_name: sgs_db
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "YOURPASSWORDHERE"
+      POSTGRES_DB: YOURDBNAMEHERE
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - sgs_network
+
+  sgs_web:
+    build: .
+    container_name: sgs_web
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      POSTGRES_HOST: sgs_db
+      POSTGRES_PORTA: 5432
+      POSTGRES_USUARIO: YOURUSERHERE
+      POSTGRES_SENHA: "YOURPASSWORDHERE"
+      POSTGRES_NAME: YOURNAMEHERE
+      SECRET_KEY: YOURSECRETKEYHERE
+      DATABASE_USUARIO: YOURUSERHERE
+      DATABASE_SENHA: YOURPASSWORDHERE
+      TELEGRAM_TOKEN: "YOUR BOT TELEGRAM TOKEN HERE"
+    depends_on:
+      - sgs_db
+    networks:
+      - sgs_network
+
 volumes:
-- postgres_data:/var/lib/postgresql/data
-networks:
-- sgs_network
-
-sgs_web:
-build: .
-container_name: sgs_web
-restart: always
-ports:
-- "5000:5000"
-environment:
-POSTGRES_HOST: sgs_db
-POSTGRES_PORTA: 5432
-POSTGRES_USUARIO: YOURUSERHERE
-POSTGRES_SENHA: "YOURPASSWORDHERE"
-POSTGRES_NAME: YOURNAMEHERE
-SECRET_KEY: YOURPASSWORDHERE
-DATABASE_USUARIO: YOURUSERHERE
-DATABASE_SENHA: YOURPASSWORDHERE
-TELEGRAM_TOKEN: "YOUR BOT TELEGRAM TOKEN HERE"
-depends_on:
-- sgs_db
-networks:
-- sgs_network
-
-volumes:
-postgres_data:
+  postgres_data:
 
 networks:
-sgs_network:
-driver: bridge
+  sgs_network:
+    driver: bridge
+
 
 ```
 
