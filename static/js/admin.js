@@ -304,7 +304,7 @@ function mostrarListaCompras() {
     // Exibe o spinner antes de iniciar o fetch
     loadingSpinner.style.display = 'flex';
 
-    fetch('/mostrar_produtos')
+    fetch('/mostrar_produtos_admin')
         .then(response => response.json())
         .then(data => {
             const listaCompras = document.getElementById('listaProdutos'); // Obtém o elemento select
