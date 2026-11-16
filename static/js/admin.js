@@ -480,42 +480,112 @@ function removerCompras(id){
 //--------------------------------------------FIM FUNÇÕES COMPRAS ----------------------------------------
 // -------------------------------------------INÍCIO FUNÇÕES VENDAS -------------------------------------
 //Função Mostrar Vendas
+const VENDAS_POR_PAGINA = 10;
+let vendasData = [];
+let vendasFiltradas = [];
+let paginaVendasAtual = 1;
+
 function mostrarVendas() {
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    // Exibe o spinner antes de iniciar o fetch
-    loadingSpinner.style.display = 'flex';
+    const carregandoVendas = document.getElementById('carregandoVendas');
+    carregandoVendas.style.display = 'block';
 
     fetch('/mostrar_vendas')
         .then(response => response.json())
         .then(data => {
-            const tabelaVendas = document.getElementById('tabelaVendas').getElementsByTagName('tbody')[0];
-            tabelaVendas.innerHTML = '';
-
-            data.forEach(vendas => {
-                const novaLinha = document.createElement('tr');
-                novaLinha.innerHTML = `
-                    <td>${vendas.id}</td>
-                    <td>${vendas.nome}</td>
-                    <td>${vendas.visitante}</td>
-                    <td>${vendas.produto}</td>
-                    <td>${vendas.quantidade}</td>
-                    <td>R$ ${parseFloat(vendas.valor_total).toFixed(2)}</td>
-                    <td>${formatarHora(vendas.hora)}</td>
-                    <td>${formatarData(vendas.data)}</td>
-                    <td class="align-middle">
-                        <a href="#!" data-mdb-tooltip-init title="Remove" onclick="removerVendas(${vendas.id})">
-                            <i class="fas fa-trash-alt fa-lg text-warning"></i>
-                        </a>
-                    </td>
-                `;
-                tabelaVendas.appendChild(novaLinha);
-            });
+            vendasData = data;
+            vendasFiltradas = data;
+            paginaVendasAtual = 1;
+            renderizarPaginaVendas();
         })
         .catch(error => console.error('Erro ao carregar a lista de vendas', error))
         .finally(() => {
             // Esconde o spinner após o carregamento ou erro
-            loadingSpinner.style.display = 'none';
+            carregandoVendas.style.display = 'none';
         });
+}
+
+function renderizarPaginaVendas() {
+    const tabelaVendas = document.getElementById('tabelaVendas').getElementsByTagName('tbody')[0];
+    tabelaVendas.innerHTML = '';
+
+    const totalPaginas = Math.max(1, Math.ceil(vendasFiltradas.length / VENDAS_POR_PAGINA));
+    paginaVendasAtual = Math.min(Math.max(paginaVendasAtual, 1), totalPaginas);
+    const inicio = (paginaVendasAtual - 1) * VENDAS_POR_PAGINA;
+    const vendasPagina = vendasFiltradas.slice(inicio, inicio + VENDAS_POR_PAGINA);
+
+    if (vendasPagina.length === 0) {
+        tabelaVendas.innerHTML = '<tr><td colspan="9" class="text-center text-muted">Nenhuma venda encontrada.</td></tr>';
+    }
+
+    vendasPagina.forEach(vendas => {
+        const novaLinha = document.createElement('tr');
+        novaLinha.innerHTML = `
+            <td>${vendas.id}</td>
+            <td>${vendas.nome}</td>
+            <td>${vendas.visitante}</td>
+            <td>${vendas.produto}</td>
+            <td>${vendas.quantidade}</td>
+            <td>R$ ${parseFloat(vendas.valor_total).toFixed(2)}</td>
+            <td>${formatarHora(vendas.hora)}</td>
+            <td>${formatarData(vendas.data)}</td>
+            <td class="align-middle">
+                <a href="#!" data-mdb-tooltip-init title="Remove" onclick="removerVendas(${vendas.id})">
+                    <i class="fas fa-trash-alt fa-lg text-warning"></i>
+                </a>
+            </td>
+        `;
+        tabelaVendas.appendChild(novaLinha);
+    });
+
+    renderizarPaginacaoVendas(totalPaginas);
+}
+
+function renderizarPaginacaoVendas(totalPaginas) {
+    const paginacao = document.getElementById('paginacaoVendas');
+    paginacao.innerHTML = '';
+
+    const itemPagina = (texto, pagina, desabilitado = false, ativo = false) => {
+        const item = document.createElement('li');
+        item.className = `page-item${desabilitado ? ' disabled' : ''}${ativo ? ' active' : ''}`;
+        const link = document.createElement('a');
+        link.className = 'page-link';
+        link.href = '#!';
+        link.textContent = texto;
+        if (!desabilitado && !ativo) {
+            link.onclick = () => {
+                paginaVendasAtual = pagina;
+                renderizarPaginaVendas();
+                return false;
+            };
+        }
+        item.appendChild(link);
+        return item;
+    };
+
+    paginacao.appendChild(itemPagina('Anterior', paginaVendasAtual - 1, paginaVendasAtual === 1));
+
+    const primeiraPagina = Math.max(1, paginaVendasAtual - 2);
+    const ultimaPagina = Math.min(totalPaginas, paginaVendasAtual + 2);
+
+    if (primeiraPagina > 1) {
+        paginacao.appendChild(itemPagina('1', 1, false, paginaVendasAtual === 1));
+    }
+    if (primeiraPagina > 2) {
+        paginacao.appendChild(itemPagina('...', 0, true));
+    }
+
+    for (let pagina = primeiraPagina; pagina <= ultimaPagina; pagina++) {
+        paginacao.appendChild(itemPagina(pagina, pagina, false, pagina === paginaVendasAtual));
+    }
+
+    if (ultimaPagina < totalPaginas - 1) {
+        paginacao.appendChild(itemPagina('...', 0, true));
+    }
+    if (ultimaPagina < totalPaginas) {
+        paginacao.appendChild(itemPagina(totalPaginas, totalPaginas, false, paginaVendasAtual === totalPaginas));
+    }
+
+    paginacao.appendChild(itemPagina('Próxima', paginaVendasAtual + 1, paginaVendasAtual === totalPaginas));
 }
 
 document.getElementById('botaoFiltrar2').addEventListener('click', function() {
@@ -533,30 +603,17 @@ document.getElementById('botaoLimpar2').addEventListener('click', function() {
 });
 
 function filtrarListaVendas() {
-    const dataInicioInput = document.getElementById('dataInicio2').value;
-    console.log(dataInicioInput)
-    const dataFimInput = document.getElementById('dataFim2').value;
-    console.log(dataFimInput)
+    const dataInicio = document.getElementById('dataInicio2').value;
+    const dataFim = document.getElementById('dataFim2').value;
 
-    // Converte as datas para objetos Date, se preenchidas
-    const dataInicio = dataInicioInput ? new Date(dataInicioInput) : null;
-    const dataFim = dataFimInput ? new Date(dataFimInput) : null;
-    
-    const tabelaVendas = document.getElementById('tabelaVendas').querySelector('tbody');
-
-    Array.from(tabelaVendas.rows).forEach(row => {
-        const dataProduto = new Date(row.cells[6].textContent.trim());
-        
-        // Se a data não for válida, ignora a linha
-        if (isNaN(dataProduto)) return console.log('Data Inválida');
-
-        
-        // Filtra com base nas datas de início e fim
-        const exibirLinha = (!dataInicio || dataProduto >= dataInicio) && 
-                            (!dataFim || dataProduto <= dataFim);
-
-        row.style.display = exibirLinha ? '' : 'none';
+    // formatarData devolve YYYY-MM-DD; nesse formato a comparação de texto já é cronológica
+    vendasFiltradas = vendasData.filter(venda => {
+        const dataVenda = formatarData(venda.data);
+        return (!dataInicio || dataVenda >= dataInicio) && (!dataFim || dataVenda <= dataFim);
     });
+
+    paginaVendasAtual = 1;
+    renderizarPaginaVendas();
 }
 
 //Função Remover Vendas
