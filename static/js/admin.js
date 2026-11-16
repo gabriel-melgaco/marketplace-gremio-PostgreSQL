@@ -12,10 +12,11 @@ function formatarData(dataString) {
     // Cria um objeto Date a partir da string de data
     const data = new Date(dataString);
     
-    // Extrai o dia, mês e ano
-    const dia = String(data.getDate()).padStart(2, '0'); // Adiciona zero à esquerda se necessário
-    const mes = String(data.getMonth() + 1).padStart(2, '0'); // Meses começam do zero, então adicionamos 1
-    const ano = data.getFullYear();
+    // Extrai o dia, mês e ano em UTC: o Flask envia a data como meia-noite GMT,
+    // e getDate()/getMonth() em UTC-3 voltariam um dia (16 vira 15).
+    const dia = String(data.getUTCDate()).padStart(2, '0'); // Adiciona zero à esquerda se necessário
+    const mes = String(data.getUTCMonth() + 1).padStart(2, '0'); // Meses começam do zero, então adicionamos 1
+    const ano = data.getUTCFullYear();
 
     // Retorna a data formatada como "DD/MM/YYYY"
     return `${ano}-${mes}-${dia}`;
@@ -25,10 +26,11 @@ function formatarHora(dataString) {
     // Cria um objeto Date a partir da string de hora
     const hora = new Date(dataString);
     
-    // Extrai as horas, minutos e segundos
-    const horas = String(hora.getHours()).padStart(2, '0');
-    const minutos = String(hora.getMinutes()).padStart(2, '0'); 
-    const segundos = String(hora.getSeconds()).padStart(2, '0'); 
+    // Extrai as horas, minutos e segundos em UTC (o Flask envia o horário local como GMT;
+    // getHours() em UTC-3 mostraria 3 horas a menos).
+    const horas = String(hora.getUTCHours()).padStart(2, '0');
+    const minutos = String(hora.getUTCMinutes()).padStart(2, '0'); 
+    const segundos = String(hora.getUTCSeconds()).padStart(2, '0'); 
 
     // Retorna a hora formatada
     return `${horas}:${minutos}:${segundos}`;
