@@ -1,129 +1,138 @@
-# Projeto de Gerenciamento de Estoque e Vendas
+# Marketplace Grêmio Falcão
 
-Este projeto foi desenvolvido utilizando Flask, com integração ao PostgreSQL e funcionalidades de bot Telegram para notificações automáticas. A aplicação permite o cadastro de pessoal, produtos, vendas e compras, além de oferecer uma interface para administração e controle de estoque.
+A web application for inventory and sales management, built with Flask and PostgreSQL, with a Telegram bot for automatic notifications.
 
-## Funcionalidades
+The app lets you register personnel, products, sales, and purchases, and provides an admin interface for managing inventory and viewing sales data.
 
-- **Login de Administrador**: Controle de acesso com autenticação utilizando Flask-Login
-- **Cadastro de Pessoal**: Permite o cadastro de pessoal com nome, posto, telefone e chat_id para integração com o Telegram
-- **Cadastro de Produtos**: Adição de produtos ao estoque com informações como categoria, unidade, tamanho, quantidade e preço de venda
-- **Registro de Vendas e Compras**: Cadastro de vendas e compras, com atualizações automáticas no estoque
-- **Integração com Telegram**: Bot Telegram que envia notificações ao pessoal cadastrado sobre compras realizadas em seu nome
-- **Interface de Administração**: Visualização e manipulação de dados (produtos, vendas, compras e pessoal) via interface web
+## Features
 
-## Tecnologias Utilizadas
+- **Admin login**: Access control with authentication using Flask-Login
+- **Personnel registration**: Register personnel with name, rank, phone number, and chat ID for Telegram integration
+- **Product registration**: Add products to inventory with category, unit, size, quantity, and sale price
+- **Sales and purchases**: Record sales and purchases with automatic inventory updates
+- **Telegram integration**: The Telegram bot notifies registered personnel about purchases made in their name
+- **Admin dashboard**: View and manage products, sales, purchases, and personnel through a web interface
+- **Sales reports**: Export sales reports to Excel (`.xlsx`) filtered by date range
+- **Paginated listings**: Browse large product, sales, and personnel lists page by page
 
-- **Flask**: Framework web para Python
-- **Flask-Login**: Gerenciamento de sessões de login
-- **Peewee**: ORM para interagir com o banco de dados
-- **PostgreSQL**: Banco de dados relacional para armazenar os dados
-- **Telegram Bot API**: Integração com Telegram para notificações
-- **Docker & Docker Compose**: Containerização e orquestração da aplicação
+## Tech Stack
 
-## Instalação com Docker Compose
+- **Flask**: Python web framework
+- **Flask-Login**: Login session management
+- **Peewee**: ORM for database access
+- **PostgreSQL**: Relational database
+- **Telegram Bot API**: Telegram integration for notifications (pyTelegramBotAPI)
+- **OpenPyXL**: Excel report generation
+- **Bootstrap**: Front-end styling
 
-### Pré-requisitos
+## Requirements
 
-- Docker e Docker Compose instalados na máquina
-- Token de bot do Telegram (obtenha com o [@BotFather](https://t.me/botfather))
+- Python 3.12+
+- PostgreSQL 14+
+- A Telegram bot token (get one from [@BotFather](https://t.me/botfather))
 
-### Passo a passo
+## Installation
 
-#### 1. Clone o repositório
+### 1. Clone the repository
 
-
-#### 2. Configure as variáveis de ambiente
-
-Edite o arquivo `docker-compose.yml` e substitua os seguintes valores:
-
-- `POSTGRES_PASSWORD`: Senha do banco de dados PostgreSQL
-- `POSTGRES_DB`: Nome do banco de dados
-- `POSTGRES_USER`: Usuário do PostgreSQL (padrão: postgres)
-- `POSTGRES_USUARIO`: Usuário para conexão da aplicação
-- `POSTGRES_SENHA`: Senha para conexão da aplicação
-- `POSTGRES_NAME`: Nome do banco para a aplicação
-- `SECRET_KEY`: Chave secreta do Flask (gere uma aleatória)
-- `DATABASE_USUARIO`: Usuário do banco de dados
-- `DATABASE_SENHA`: Senha do banco de dados
-- `TELEGRAM_TOKEN`: Token do seu bot Telegram
-
-#### 3. Arquivo docker-compose.yml
-
-```
-services:
-  sgs_db:
-    image: postgres:17
-    container_name: sgs_db
-    restart: unless-stopped
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: "YOURPASSWORDHERE"
-      POSTGRES_DB: YOURDBNAMEHERE
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - sgs_network
-
-  sgs_web:
-    build: .
-    container_name: sgs_web
-    restart: always
-    ports:
-      - "5000:5000"
-    environment:
-      POSTGRES_HOST: sgs_db
-      POSTGRES_PORTA: 5432
-      POSTGRES_USUARIO: YOURUSERHERE
-      POSTGRES_SENHA: "YOURPASSWORDHERE"
-      POSTGRES_NAME: YOURNAMEHERE
-      SECRET_KEY: YOURSECRETKEYHERE
-      DATABASE_USUARIO: YOURUSERHERE
-      DATABASE_SENHA: YOURPASSWORDHERE
-      TELEGRAM_TOKEN: "YOUR BOT TELEGRAM TOKEN HERE"
-    depends_on:
-      - sgs_db
-    networks:
-      - sgs_network
-
-volumes:
-  postgres_data:
-
-networks:
-  sgs_network:
-    driver: bridge
-
-
+```bash
+git clone https://github.com/gabriel-melgaco/marketplace-gremio.git
+cd marketplace-gremio
 ```
 
-#### 4. Construa e inicie os containers
+### 2. Create a virtual environment
 
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
 
-#### 5. Acesse a aplicação
+On Windows, activate it with:
 
-A aplicação estará disponível em: [**http://localhost:5000**](http://localhost:5000)
+```powershell
+venv\Scripts\activate
+```
 
-O banco de dados PostgreSQL estará acessível em: **localhost:5432**
+### 3. Install dependencies
 
-#### 6. Verificar os logs
+```bash
+pip install -r requirements.txt
+```
 
-docker-compose logs -f sgs_web
+### 4. Create the PostgreSQL database
 
+```sql
+CREATE DATABASE marketplace;
+```
 
-## Contribuições
+The application creates its tables automatically on the first run.
 
-Sinta-se à vontade para contribuir para o projeto! 
+### 5. Configure the environment variables
 
+Create a `.env` file in the project root:
 
-## Licença
+```env
+SECRET_KEY=your-secret-key
+DATABASE_USUARIO=postgres
+DATABASE_SENHA=your-database-password
+TELEGRAM_TOKEN=your-telegram-bot-token
+POSTGRES_USUARIO=postgres
+POSTGRES_SENHA=your-database-password
+POSTGRES_HOST=localhost
+POSTGRES_PORTA=5432
+POSTGRES_NAME=marketplace
+```
 
-Este projeto foi desenvolvido para fins de estudo e como uma aplicação funcional para gerenciar estoque e vendas.
+Notes:
 
-## Autor
+- `DATABASE_USUARIO` and `DATABASE_SENHA` are also the credentials used to log in to the admin area.
+- `POSTGRES_PORTA` is the database port (the variable name is in Portuguese in the code).
+- `SECRET_KEY` should be a long random string.
+
+### 6. Run the application
+
+```bash
+python app.py
+```
+
+This starts the Flask web server and the Telegram bot in the same process.
+
+The application will be available at [**http://localhost:5000**](http://localhost:5000).
+
+## Telegram Setup
+
+1. Create a bot with [@BotFather](https://t.me/botfather) and copy the token to `TELEGRAM_TOKEN`.
+2. Register the personnel in the admin area.
+3. Send `/start` to the bot and select your name. The bot saves your Telegram chat ID and starts sending notifications about purchases made in your name.
+
+## Usage
+
+- Log in at [**http://localhost:5000/pagina_login**](http://localhost:5000/pagina_login) using `DATABASE_USUARIO` and `DATABASE_SENHA`.
+- The admin dashboard is available after login.
+- Sales reports are generated as `.xlsx` files and saved to the `relatorios/` folder before download.
+
+## Project Structure
+
+```
+app.py             # Flask app, database models, routes, and Telegram bot
+templates/         # HTML templates
+static/            # CSS, JavaScript, and images
+relatorios/        # Generated sales reports
+requirements.txt   # Python dependencies
+```
+
+## Contributing
+
+Feel free to contribute to this project!
+
+## License
+
+This project was developed for learning purposes and as a functional application for managing inventory and sales.
+
+## Author
 
 Gabriel Melgaço - [GitHub](https://github.com/gabriel-melgaco)
 
 ---
 
-**Nota**: Este projeto está em constante desenvolvimento. Melhorias e novas funcionalidades podem ser adicionadas conforme a necessidade.
+**Note**: This project is under constant development. Improvements and new features may be added as needed.
